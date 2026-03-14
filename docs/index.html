@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Antibiotika Atlas</title>
+        <meta
+            name="description"
+            content="Lernübersicht zu Antibiotika nach Wirkorten, Erregerschwerpunkten und klinischen Merksätzen."
+        />
+        <link rel="stylesheet" href="src/styles.css" />
+    </head>
+    <body>
+        <div class="page-shell">
+            <aside class="side-panel">
+                <div class="side-panel__brand">
+                    <p class="eyebrow">Antibiotika Atlas</p>
+                    <h1>Navigation</h1>
+                    <p class="side-panel__intro"></p>
+                </div>
+
+                <nav
+                    class="page-nav"
+                    id="page-nav"
+                    aria-label="Seitennavigation"
+                ></nav>
+            </aside>
+
+            <main class="content">
+                <header class="hero panel" id="top" data-nav-anchor>
+                    <div class="hero__copy" id="hero-copy"></div>
+                </header>
+
+                <section class="group-library" id="group-library"></section>
+            </main>
+        </div>
+
+        <script src="src/data/antibioticData.js"></script>
+        <script src="src/app.js"></script>
+    </body>
+</html>
