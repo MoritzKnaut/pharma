@@ -2,25 +2,28 @@
 
 ## Overview
 
-This project is a small static single-page website that turns the raw notes in `Antibiotika.md` into a structured learning reference. The page is built around explicit overgroups, each of which owns its own second-level sections. That keeps navigation and content structure aligned. The published website lives inside `docs/` so GitHub Pages can serve one explicit folder while repository Markdown files stay outside the site.
+This project is a small static single-page website that turns the raw notes in `Antibiotika.md`, `Antimykotika.md`, `Antiparasitika.md`, and `Virostatika.md` into structured learning references. The page supports four topic libraries that share the same renderer and visual system. Each library is built around explicit overgroups, each of which owns its own second-level sections. The published website lives inside `docs/` so GitHub Pages can serve one explicit folder while repository Markdown files stay outside the site.
 
 ## Main Building Blocks
 
 ### `docs/index.html`
 
-Provides the page shell and the mounting points for the header, the two-step navigation, and the overgroup content panels.
+Provides the page shell and the mounting points for the topic switcher, the header, the two-step navigation, and the overgroup content panels.
 
 ### `docs/src/data/antibioticData.js`
 
-Contains the canonical website content in one explicit object centered on `overgroups`:
+Contains the canonical website content in one explicit collection centered on `libraries`:
 
-- page metadata
-- one learning overgroup for `Schnellübersicht` and `Merksätze`
-- the four requested antibiotic overgroups
-- second-level sections inside each overgroup
+- one library for `Antibiotika`
+- one library for `Antimykotika`
+- one library for `Antiparasitika`
+- one library for `Virostatika`
+- page metadata per library
+- optional focused support overgroups such as `Anhand Erreger` and `Prägemuster`
+- topic-specific overgroups and second-level sections inside each library
 - optional short summaries on overgroups, sections, and cards
 - cards or entries inside each section
-- `Merksätze` cards with a label plus editable bullet items
+- compact pattern cards with a label plus editable bullet items
 - optional `substances` lists on entries and variants
 - optional `sideEffects` lists on entries and variants
 - optional `mechanism` lists on entries and variants
@@ -34,11 +37,11 @@ This file is the intended editing surface for future content changes.
 
 ### `docs/src/app.js`
 
-Reads the central data object, renders all visible sections, wires the active state for the two-step navigation, manages collapsible section blocks, Wirkstoffgruppe cards, and nested info blocks, starts them collapsed by default, expands only the relevant target path when navigation targets are used, and exposes a global reset control for returning to the initial collapsed page state. It also derives semantic tags such as grampositive, gramnegative, anaerobe, atypische, or intrazelluläre patterns from fact text, renders `Merksätze` as bullet lists, renders card buckets such as `Substanzen`, `Wirksamkeit`, `Nebenwirkungen`, `Wirkmechanismus`, `Merke`, and `Sonstiges`, nests `Grenzen` inside `Wirksamkeit`, resolves learning-card items to linked Wirkstoffgruppen, and promotes larger variant families into wider left-to-right layouts. It does not contain antibiotic facts itself; it only transforms data into HTML.
+Reads the central library collection, selects the active topic library from the `?thema=` query parameter, renders all visible sections, wires the active state for the two-step navigation, manages collapsible section blocks, Wirkstoffgruppe cards, and nested info blocks, starts them collapsed by default, expands only the relevant target path when navigation targets are used, and exposes a global reset control for returning to the initial collapsed page state. It also renders the topic switcher, updates document metadata per library, derives semantic tags such as grampositive, gramnegative, anaerobe, atypische, Hefen, or Schimmelpilze from fact text, renders compact pattern cards as bullet lists, renders card buckets such as `Substanzen`, `Wirksamkeit`, `Nebenwirkungen`, `Wirkmechanismus`, `Merke`, and `Sonstiges`, nests `Grenzen` inside `Wirksamkeit`, resolves learning-card items to linked Wirkstoffgruppen, and promotes larger variant families into wider left-to-right layouts. It does not contain domain facts itself; it only transforms data into HTML.
 
 ### `docs/src/styles.css`
 
-Defines the visual system, responsive layout, group-specific accents, and the semantic color system for quick-glance fact tags. Styling depends on `data-group` attributes and semantic tag classes instead of content internals, so content and presentation stay loosely coupled.
+Defines the shared visual system, responsive layout, topic-specific accents, and the semantic color system for quick-glance fact tags. Styling depends on `data-group` attributes and semantic tag classes instead of content internals, so content and presentation stay loosely coupled.
 
 ### `docs/.nojekyll`
 
@@ -46,29 +49,31 @@ Ensures GitHub Pages serves the `docs/` folder as a plain static site without Je
 
 ## Responsibilities And Boundaries
 
-- `Antibiotika.md` is the raw source note set.
-- `docs/src/data/antibioticData.js` is the structured website content.
+- `Antibiotika.md`, `Antimykotika.md`, `Antiparasitika.md`, and `Virostatika.md` are the raw source note sets.
+- `docs/src/data/antibioticData.js` is the structured website content collection.
 - `docs/src/app.js` is the only place that converts content into DOM markup.
 - `docs/src/styles.css` is the only place that decides layout, color, spacing, and responsive behavior.
 - `docs/` is the only folder GitHub Pages should publish.
 
-The renderer must only consume the public shape of the `overgroups` data. Styling must only rely on stable IDs and `data-group` attributes.
-Primary learning statements and secondary bracket-style details are separated in data so presentation can emphasize them differently without changing content.
+The renderer must only consume the public shape of the `libraries` and `overgroups` data. Styling must only rely on stable IDs and `data-group` attributes. Primary learning statements and secondary bracket-style details are separated in data so presentation can emphasize them differently without changing content.
 
 ## Data Flow
 
 1. The browser loads `docs/index.html`.
-2. `docs/src/data/antibioticData.js` defines `window.antibioticLibrary`.
-3. `docs/src/app.js` reads that object, builds the two-step navigation, and fills the page placeholders.
+2. `docs/src/data/antibioticData.js` defines `window.medicationLibraryCollection`.
+3. `docs/src/app.js` selects the active library, builds the topic switcher and two-step navigation, and fills the page placeholders.
 4. CSS applies layout and group-specific visual treatment.
 
 There is no build step, no backend, and no runtime fetching.
 
 ## Folder Structure
 
-- `Antibiotika.md`: original notes that the site content is based on
+- `Antibiotika.md`: original source notes for the antibiotic library
+- `Antimykotika.md`: original source notes for the antifungal library
+- `Antiparasitika.md`: original source notes for the antiparasitic library
+- `Virostatika.md`: original source notes for the antiviral library
 - `docs/index.html`: static page shell for the published site
-- `docs/src/data/antibioticData.js`: editable structured content
+- `docs/src/data/antibioticData.js`: editable structured content collection
 - `docs/src/app.js`: renderer and navigation behavior
 - `docs/src/styles.css`: visual system and responsive layout
 - `docs/.nojekyll`: GitHub Pages static-site marker
@@ -79,11 +84,26 @@ There is no build step, no backend, and no runtime fetching.
 - Keep content changes concentrated in `docs/src/data/antibioticData.js`.
 - Keep site files inside `docs/` so GitHub Pages can publish one explicit folder.
 - Keep rendering logic simple and data-driven.
+- Keep the shared renderer generic enough to handle both topic libraries without topic-specific HTML forks.
 - Keep navigation aligned with the content model: overgroup first, section second.
-- Keep `Schnellübersicht` and `Merksätze` together under the dedicated learning overgroup.
+- Keep optional support sections explicit instead of mixing them into pharmacology groups.
 - Keep Markdown source and documentation files at the repository root so they stay outside the published site.
-- Preserve the four top-level groups:
+- Preserve the four top-level antibiotic groups:
   - Äußere Begrenzungen
   - Nukleinsäure und zugehörige Enzyme
   - Bakterielle Ribosomen
   - Folsäuremetabolismus
+- Preserve the four top-level antimycotic groups:
+  - Azol-Antimykotika
+  - Polyen-Antimykotika
+  - Echinocandine
+  - Weitere Antimykotika
+- Preserve the three top-level antiparasitic groups:
+  - Antiprotozoika
+  - Anthelminthika
+  - Ektoparasitizide
+- Preserve the three top-level antiviral groups:
+  - Antivirale Pharmaka gegen Herpesviridae
+  - Antivirale Pharmaka gegen Influenzaviren
+  - Antiretrovirale Therapie bei HIV
+  - Antivirale Pharmaka gegen Hepatitis B und C

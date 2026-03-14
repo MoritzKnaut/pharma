@@ -1,10 +1,13 @@
 (function () {
-  var library = window.antibioticLibrary;
+  var collection = getLibraryCollection();
+  var library = resolveCurrentLibrary(collection);
 
   if (!library) {
     return;
   }
 
+  var librarySwitcher = document.getElementById("library-switcher");
+  var sidePanelIntro = document.querySelector(".side-panel__intro");
   var heroCopy = document.getElementById("hero-copy");
   var pageNav = document.getElementById("page-nav");
   var groupLibrary = document.getElementById("group-library");
@@ -17,6 +20,16 @@
     { kind: "notes", label: "Merke" },
     { kind: "other", label: "Sonstiges" },
   ];
+
+  updateDocumentMetadata(library);
+
+  if (librarySwitcher) {
+    librarySwitcher.innerHTML = renderLibrarySwitcher(collection, library);
+  }
+
+  if (sidePanelIntro) {
+    sidePanelIntro.textContent = library.page.navIntro || library.page.description || "";
+  }
 
   heroCopy.innerHTML = [
     '<div class="hero__header-row">',
@@ -38,6 +51,100 @@
   setupInfoBucketButtons();
   setupOvergroupActionButtons();
   setupActiveNavigation(library.overgroups);
+
+  function getLibraryCollection() {
+    if (
+      window.medicationLibraryCollection &&
+      window.medicationLibraryCollection.libraries &&
+      window.medicationLibraryCollection.libraries.length
+    ) {
+      return window.medicationLibraryCollection;
+    }
+
+    if (window.antibioticLibrary) {
+      return {
+        defaultLibraryId: "antibiotika",
+        libraries: [
+          Object.assign(
+            {
+              id: "antibiotika",
+              label: "Antibiotika",
+            },
+            window.antibioticLibrary
+          ),
+        ],
+      };
+    }
+
+    return { defaultLibraryId: "", libraries: [] };
+  }
+
+  function resolveCurrentLibrary(currentCollection) {
+    var libraries = currentCollection.libraries || [];
+    var params = new URLSearchParams(window.location.search);
+    var requestedLibraryId = params.get("thema");
+    var matchedLibrary = libraries.find(function (item) {
+      return item.id === requestedLibraryId;
+    });
+
+    if (matchedLibrary) {
+      return matchedLibrary;
+    }
+
+    return (
+      libraries.find(function (item) {
+        return item.id === currentCollection.defaultLibraryId;
+      }) || libraries[0]
+    );
+  }
+
+  function updateDocumentMetadata(currentLibrary) {
+    document.title = currentLibrary.page.title;
+
+    var descriptionMeta = document.querySelector('meta[name="description"]');
+
+    if (descriptionMeta && currentLibrary.page.description) {
+      descriptionMeta.setAttribute("content", currentLibrary.page.description);
+    }
+
+    document.body.setAttribute("data-library", currentLibrary.id);
+  }
+
+  function renderLibrarySwitcher(currentCollection, currentLibrary) {
+    return [
+      '<section class="library-switcher" aria-label="Thema auswählen">',
+      '<p class="page-nav__bucket-label">Thema</p>',
+      '<div class="library-switcher__list">',
+      currentCollection.libraries
+        .map(function (item) {
+          return [
+            '<a class="library-switcher__link' +
+              (item.id === currentLibrary.id ? " is-active" : "") +
+              '" href="' +
+              escapeHtml(buildLibraryHref(item.id)) +
+              '">',
+            escapeHtml(item.label),
+            "</a>",
+          ].join("");
+        })
+        .join(""),
+      "</div>",
+      "</section>",
+    ].join("");
+  }
+
+  function buildLibraryHref(libraryId) {
+    var params = new URLSearchParams(window.location.search);
+
+    params.set("thema", libraryId);
+
+    return (
+      window.location.pathname +
+      "?" +
+      params.toString() +
+      "#top"
+    );
+  }
 
   function renderPageNav(overgroups) {
     return [
@@ -873,7 +980,7 @@
   }
 
   function getOvergroupHeading(overgroup) {
-    if (overgroup.id === "folsaeuremetabolismus" || overgroup.kind === "learning") {
+    if (overgroup.kind === "learning" || overgroup.preferTitleInNav) {
       return overgroup.title;
     }
 
@@ -884,7 +991,7 @@
     var lookup = {};
 
     overgroups.forEach(function (overgroup) {
-      if (overgroup.kind !== "antibiotic") {
+      if (overgroup.kind === "learning") {
         return;
       }
 
@@ -1064,7 +1171,30 @@
       { label: "VRE", tone: "vre", match: /\bvre\b/ },
       { label: "Enterokokken", tone: "enterococci", match: /enterokokk/ },
       { label: "Mykobakterien", tone: "mycobacteria", match: /mykobakter/ },
-      { label: "Protozoen", tone: "protozoa", match: /protozo/ },
+      {
+        label: "Protozoen",
+        tone: "protozoa",
+        match: /protozo|giardi|lamblia|entamoeba|am[oö]b|trichomon/,
+      },
+      { label: "Hefen", tone: "yeasts", match: /\bhefen?\b|candida/ },
+      { label: "Schimmel", tone: "molds", match: /schimmel|aspergill/ },
+      { label: "Dermatophyten", tone: "dermatophytes", match: /dermatophyt/ },
+      { label: "Kryptokokken", tone: "cryptococci", match: /kryptokokk/ },
+      { label: "Onychomykose", tone: "onychomycosis", match: /onychomykos/ },
+      { label: "Nematoden", tone: "nematodes", match: /nematod|ascari|trichin|enterob|oxyuriasis|ancylostomat|strongyloid/ },
+      { label: "Cestoden", tone: "cestodes", match: /cestod|taenia|echinokokk|diphylloboth/ },
+      { label: "Trematoden", tone: "trematodes", match: /trematod|schistosom/ },
+      { label: "Skabies", tone: "scabies", match: /skabie|scabie/ },
+      { label: "Läuse", tone: "lice", match: /laus|lause|pedicul|filzlaus/ },
+      { label: "Malaria", tone: "malaria", match: /malaria/ },
+      { label: "Leishmaniose", tone: "leishmanio", match: /leishmanio/ },
+      { label: "Herpes", tone: "herpes", match: /herpes simplex|herpesvir|aciclovir|valaciclovir/ },
+      { label: "Varizella zoster", tone: "vzv", match: /varizella|zoster/ },
+      { label: "CMV", tone: "cmv", match: /\bcmv\b|zytomegal/ },
+      { label: "Influenza", tone: "influenza", match: /influenza|oseltamivir|amantadin/ },
+      { label: "Hepatitis B", tone: "hepatitisb", match: /hepatitis b|entecavir|lamivudin|telbivudin|tenofovir|adefovir/ },
+      { label: "Hepatitis C", tone: "hepatitisc", match: /hepatitis c|sofosbuvir|glecaprevir|grazoprevir|voxilaprevir|paritaprevir|ledipasvir|elbasvir|velpatasvir|pibrentasvir|ribavirin/ },
+      { label: "HIV", tone: "hiv", match: /\bhiv\b|aids/ },
     ];
 
     return definitions.filter(function (definition) {
