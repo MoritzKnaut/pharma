@@ -71,6 +71,11 @@ It also supports two kinds of top reference sections:
 
 Entry sections can optionally hide their own visible heading when they only serve as an internal grouping layer. This keeps categories with flatter structures aligned with the same renderer without forcing redundant intermediate boxes.
 
+Entries can also make the meaning of their `variants` explicit:
+
+- default `variants` render as collapsible subgroup cards
+- `variantsKind: "substances"` renders those children inside the gray `Substanzen` bucket instead
+
 Learning links are now explicit. When a visible label should point to a different entry name, the data uses `referenceItem(...)` instead of a hidden global alias list.
 
 ### `docs/src/styles.css`

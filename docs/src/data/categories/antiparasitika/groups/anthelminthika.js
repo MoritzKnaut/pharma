@@ -47,6 +47,7 @@
           {
             name: "Mikrotubuli-Inhibitoren",
             substances: ["Albendazol", "Mebendazol"],
+            variantsKind: "substances",
             mechanism: [fact("Hemmung der Polymerisation von Mikrotubuli")],
             variants: [
               {

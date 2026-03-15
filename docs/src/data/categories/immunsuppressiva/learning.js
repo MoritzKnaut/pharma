@@ -8,7 +8,7 @@
     kind: "learning",
     includeInLearningLookup: false,
     theme: themes.neutral,
-    title: "Lernübersichten",
+    title: "Links",
     kicker: "Schneller Zugriff",
     description:
       "Die Struktur für indikationsbasierte Übersichten ist vorbereitet. Fachinhalte folgen später.",
@@ -22,6 +22,14 @@
           "Sobald Wirkstoffgruppen gepflegt sind, erscheint hier automatisch die gedrehte Sicht nach Indikationen.",
         emptyState:
           "Noch keine Immunsuppressiva eingetragen. Pflege die Daten direkt in dieser Kategorie-Datei.",
+      },
+      {
+        id: "immunsuppressiva-anhang-erkrankung",
+        type: "referenceIndex",
+        source: "diseaseLinks",
+        title: "Anhang Erkrankung",
+        description: "",
+        emptyState: "Noch keine Inhalte vorhanden.",
       },
     ],
   };

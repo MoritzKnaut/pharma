@@ -10,7 +10,7 @@
     kind: "learning",
     includeInLearningLookup: false,
     theme: themes.neutral,
-    title: "Lernübersichten",
+    title: "Links",
     kicker: "Schneller Zugriff",
     description: "",
     sections: [
@@ -28,7 +28,7 @@
               "Carbapeneme",
               "Makrolide",
               "Tetracycline",
-              referenceItem("Glycylcycline", "Glycylcycline (z.B. Tigecyclin)"),
+              referenceItem("Tigecyclin", "Glycylcycline (z.B. Tigecyclin)"),
               "Lincosamide",
               fact("Fluorchinolone", "v.a. Gruppe III-IV"),
               referenceItem("Sulfonamide / Cotrimoxazol", "Cotrimoxazol"),
@@ -140,59 +140,12 @@
         ],
       },
       {
-        id: "clinical-pearls",
-        type: "pearls",
-        title: "Prägemuster",
+        id: "anhang-erkrankung",
+        type: "referenceIndex",
+        source: "diseaseLinks",
+        title: "Anhang Erkrankung",
         description: "",
-        cards: [
-          {
-            label: "Grampositiv-only",
-            items: ["Vancomycin", "Linezolid", "Daptomycin"],
-          },
-          {
-            label: "Gramnegativ-stark",
-            items: [
-              referenceItem(
-                "Cephalosporine 3-4",
-                "Cephalosporine",
-                "3.-4. Generation",
-              ),
-              "Carbapeneme",
-              "Aminoglykoside",
-            ],
-          },
-          {
-            label: "Pseudomonas",
-            items: [
-              "Piperacillin/Tazobactam",
-              "Ceftazidim",
-              "Cefepim",
-              "Carbapeneme",
-              "Ciprofloxacin",
-              "Aminoglykoside",
-            ],
-          },
-          {
-            label: "Anaerobier",
-            items: ["Metronidazol", "Clindamycin", "Carbapeneme"],
-          },
-          {
-            label: "Atypiker / Intrazellulär",
-            items: [
-              "Makrolide",
-              "Tetracycline",
-              referenceItem(
-                "neuere Fluorchinolone",
-                "Fluorchinolone",
-                "Gruppe III-IV",
-              ),
-            ],
-          },
-          {
-            label: "MRSA",
-            items: ["Vancomycin", "Linezolid", "Daptomycin"],
-          },
-        ],
+        emptyState: "Noch keine Inhalte vorhanden.",
       },
     ],
   };

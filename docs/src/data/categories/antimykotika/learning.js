@@ -9,7 +9,7 @@
     kind: "learning",
     includeInLearningLookup: false,
     theme: themes.neutral,
-    title: "Lernübersichten",
+    title: "Links",
     kicker: "Schneller Zugriff",
     description: "",
     sections: [
@@ -59,6 +59,14 @@
             items: ["Itraconazol", "Ciclopirox", "Terbinafin"],
           },
         ],
+      },
+      {
+        id: "antimykotika-anhang-erkrankung",
+        type: "referenceIndex",
+        source: "diseaseLinks",
+        title: "Anhang Erkrankung",
+        description: "",
+        emptyState: "Noch keine Inhalte vorhanden.",
       },
     ],
   };

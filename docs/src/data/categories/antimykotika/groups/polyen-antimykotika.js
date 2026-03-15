@@ -21,6 +21,7 @@
         entries: [
           {
             name: "Polyen-Antimykotika",
+            variantsKind: "substances",
             mechanism: [
               fact("Polyen: Bindung an Ergosterol"),
               fact("Membrandurchlässigkeit steigt", "fungizide Wirkung"),

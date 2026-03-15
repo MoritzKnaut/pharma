@@ -8,7 +8,7 @@
     kind: "learning",
     includeInLearningLookup: false,
     theme: themes.neutral,
-    title: "Lernübersichten",
+    title: "Links",
     kicker: "Schneller Zugriff",
     description: "",
     sections: [
@@ -60,6 +60,14 @@
             ],
           },
         ],
+      },
+      {
+        id: "virostatika-anhang-erkrankung",
+        type: "referenceIndex",
+        source: "diseaseLinks",
+        title: "Anhang Erkrankung",
+        description: "",
+        emptyState: "Noch keine Inhalte vorhanden.",
       },
     ],
   };

@@ -20,6 +20,7 @@
         entries: [
           {
             name: "Imidazole",
+            variantsKind: "substances",
             mechanism: [fact("Azole: Hemmung der Ergosterol-Synthese")],
             notes: [fact("Vor allem lokal angewendete Azole")],
             variants: [
@@ -44,6 +45,7 @@
           },
           {
             name: "Triazole",
+            variantsKind: "substances",
             mechanism: [fact("Azole: Hemmung der Ergosterol-Synthese")],
             notes: [fact("Systemisch nutzbare Azole")],
             variants: [

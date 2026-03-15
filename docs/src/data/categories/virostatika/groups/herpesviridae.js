@@ -21,6 +21,7 @@
         entries: [
           {
             name: "DNA-Polymerase-Inhibitoren",
+            variantsKind: "substances",
             mechanism: [fact("Hemmung der viralen DNA-Polymerase")],
             variants: [
               {

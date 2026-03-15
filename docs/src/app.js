@@ -117,6 +117,17 @@
             return true;
           }
 
+          if (section.cards && section.cards.length) {
+            return section.cards.some(function (card, index) {
+              var cardAnchorId =
+                section.type === "referenceIndex"
+                  ? getGeneratedCardAnchorId(section, card, index)
+                  : getSectionCardAnchorId(section, card);
+
+              return cardAnchorId === targetId;
+            });
+          }
+
           if (!section.entries) {
             return false;
           }
@@ -146,7 +157,6 @@
       labels: Object.assign(
         {
           librarySwitcher: "Kategorie",
-          startView: "Start",
           pageControls: "Seitensteuerung",
           autoExpand: "Automatisch ausklappen",
           expandAll: "Alles ausklappen",
@@ -245,7 +255,6 @@
 
   function renderPageNav(overgroups, view) {
     return [
-      renderStartViewNavItem(view),
       overgroups
         .map(function (overgroup) {
           return renderOvergroupNavItem(overgroup, view);
@@ -255,25 +264,16 @@
     ].join("");
   }
 
-  function renderStartViewNavItem(view) {
-    return [
-      '<section class="page-nav__group">',
-      '<a class="page-nav__top' +
-        (view.isOverview ? " is-active" : "") +
-        '" href="' +
-        escapeHtml(buildViewHref(category.id, null, "top")) +
-        '">',
-      '<span class="page-nav__label">' + escapeHtml(rendererConfig.labels.startView) + "</span>",
-      "</a>",
-      "</section>",
-    ].join("");
-  }
-
   function renderOvergroupNavItem(overgroup, view) {
     var isActive = Boolean(view.activeOvergroup && view.activeOvergroup.id === overgroup.id);
+    var shouldShowSubnav = shouldAlwaysShowOvergroupSubnav(overgroup) || isActive;
 
     return [
-      '<section class="page-nav__group" data-group="' + escapeHtml(overgroup.id) + '">',
+      '<section class="page-nav__group" data-group="' +
+        escapeHtml(overgroup.id) +
+        '"' +
+        renderThemeStyleAttribute(resolveOvergroupTheme(overgroup)) +
+        ">",
       '<a class="page-nav__top' +
         (isActive ? " is-active" : "") +
         '" href="' +
@@ -281,33 +281,83 @@
         '">',
       '<span class="page-nav__label">' + escapeHtml(getOvergroupHeading(overgroup)) + "</span>",
       "</a>",
-      isActive ? renderOvergroupSectionNav(overgroup) : "",
+      shouldShowSubnav ? renderOvergroupSectionNav(overgroup) : "",
       "</section>",
     ].join("");
   }
 
+  function shouldAlwaysShowOvergroupSubnav(overgroup) {
+    return overgroup.kind !== "learning";
+  }
+
   function renderOvergroupSectionNav(overgroup) {
-    var visibleSections = overgroup.sections.filter(function (section) {
-      return !section.hideTitle;
+    var navSections = buildOverviewSections(overgroup).filter(function (section) {
+      return !section.hideTitle || section.items.length;
     });
 
-    if (!visibleSections.length) {
+    if (!navSections.length) {
       return "";
     }
 
     return [
       '<div class="page-nav__subnav">',
-      visibleSections
+      navSections
         .map(function (section) {
-          return [
-            '<a class="page-nav__sub-link" href="#' +
-              escapeHtml(section.id) +
+          return renderOvergroupSectionNavGroup(overgroup, section);
+        })
+        .join(""),
+      "</div>",
+    ].join("");
+  }
+
+  function renderOvergroupSectionNavGroup(overgroup, section) {
+    var groupClasses = ["page-nav__subgroup"];
+
+    if (section.hideTitle) {
+      groupClasses.push("page-nav__subgroup--items-only");
+    }
+
+    return [
+      '<div class="' + groupClasses.map(escapeHtml).join(" ") + '">',
+      section.hideTitle
+        ? ""
+        : [
+            '<a class="page-nav__sub-link" href="' +
+              escapeHtml(buildViewHref(category.id, overgroup.id, section.id)) +
               '" data-nav-target="' +
               escapeHtml(section.id) +
               '">',
             escapeHtml(section.title),
             "</a>",
-          ].join("");
+          ].join(""),
+      section.items.length
+        ? renderOvergroupSectionNavItems(section.items, {
+            standalone: section.hideTitle,
+          })
+        : "",
+      "</div>",
+    ].join("");
+  }
+
+  function renderOvergroupSectionNavItems(items, options) {
+    var currentOptions = options || {};
+    var itemClasses = ["page-nav__subitems"];
+
+    if (currentOptions.standalone) {
+      itemClasses.push("page-nav__subitems--standalone");
+    }
+
+    return [
+      '<div class="' + itemClasses.map(escapeHtml).join(" ") + '">',
+      items
+        .map(function (item) {
+          return (
+            '<a class="page-nav__sub-link page-nav__sub-link--entry" href="' +
+            escapeHtml(item.href) +
+            '">' +
+            escapeHtml(item.label) +
+            "</a>"
+          );
         })
         .join(""),
       "</div>",
@@ -377,17 +427,25 @@
   }
 
   function renderOverviewCard(overgroup) {
+    var overviewCardClasses = getOverviewCardClasses(overgroup);
     var summarySections = buildOverviewSections(overgroup);
 
     if (summarySections.length === 1 && summarySections[0].hideTitle) {
-      return renderOverviewCardWithDirectItems(overgroup, summarySections[0].items);
+      return renderOverviewCardWithDirectItems(overgroup, summarySections[0].items, {
+        cardClasses: overviewCardClasses,
+      });
     }
 
     return [
-      '<article class="overview-card panel"' +
+      '<article class="' +
+        overviewCardClasses.map(escapeHtml).join(" ") +
+        '"' +
         renderThemeStyleAttribute(resolveOvergroupTheme(overgroup), "overview") +
         ">",
       '<div class="overview-card__header">',
+      overgroup.kind === "learning" && overgroup.kicker
+        ? '<p class="overview-card__eyebrow">' + escapeHtml(overgroup.kicker) + "</p>"
+        : "",
       '<a class="overview-card__title-link" href="' +
         escapeHtml(buildViewHref(category.id, overgroup.id, "top")) +
         '">',
@@ -409,12 +467,20 @@
     ].join("");
   }
 
-  function renderOverviewCardWithDirectItems(overgroup, items) {
+  function renderOverviewCardWithDirectItems(overgroup, items, options) {
+    var currentOptions = options || {};
+    var overviewCardClasses = currentOptions.cardClasses || getOverviewCardClasses(overgroup);
+
     return [
-      '<article class="overview-card panel"' +
+      '<article class="' +
+        overviewCardClasses.map(escapeHtml).join(" ") +
+        '"' +
         renderThemeStyleAttribute(resolveOvergroupTheme(overgroup), "overview") +
         ">",
       '<div class="overview-card__header">',
+      overgroup.kind === "learning" && overgroup.kicker
+        ? '<p class="overview-card__eyebrow">' + escapeHtml(overgroup.kicker) + "</p>"
+        : "",
       '<a class="overview-card__title-link" href="' +
         escapeHtml(buildViewHref(category.id, overgroup.id, "top")) +
         '">',
@@ -434,6 +500,16 @@
           "</p>",
       "</article>",
     ].join("");
+  }
+
+  function getOverviewCardClasses(overgroup) {
+    var classes = ["overview-card", "panel"];
+
+    if (overgroup.kind === "learning") {
+      classes.push("overview-card--learning");
+    }
+
+    return classes;
   }
 
   function buildOverviewSections(overgroup) {
@@ -469,7 +545,7 @@
       return section.cards.map(function (card) {
         return {
           label: card.title || card.label,
-          href: buildViewHref(category.id, overgroup.id, section.id),
+          href: buildViewHref(category.id, overgroup.id, getSectionCardAnchorId(section, card)),
         };
       });
     }
@@ -514,7 +590,9 @@
     var currentOptions = options || {};
 
     return [
-      '<article class="reference-card" data-collapsible="reference" data-collapsed="true">',
+      '<article class="reference-card"' +
+        (currentOptions.anchorId ? ' id="' + escapeHtml(currentOptions.anchorId) + '"' : "") +
+        ' data-collapsible="reference" data-collapsed="true">',
       '<div class="reference-card__header">',
       renderCollapseToggleStart(card.title, "reference", "reference-card__toggle"),
       '<span class="reference-card__heading-copy">',
@@ -566,11 +644,14 @@
     ].join("");
   }
 
-  function renderClinicalPearl(pearl) {
+  function renderClinicalPearl(pearl, options) {
     var pearlText = pearl.items ? pearl.items.join(" ") : pearl.text;
+    var currentOptions = options || {};
 
     return [
-      '<article class="pearl-card">',
+      '<article class="pearl-card"' +
+        (currentOptions.anchorId ? ' id="' + escapeHtml(currentOptions.anchorId) + '"' : "") +
+        ">",
       renderSemanticTags(pearl.label + " " + pearlText),
       '<div class="pearl-card__header">',
       '<p class="eyebrow">' + escapeHtml(rendererConfig.labels.pearlEyebrow) + "</p>",
@@ -680,14 +761,26 @@
     } else if (section.type === "quickReference") {
       sectionBody =
         '<div class="reference-grid">' +
-        section.cards.map(renderQuickReferenceCard).join("") +
+        section.cards
+          .map(function (card) {
+            return renderQuickReferenceCard(card, {
+              anchorId: getSectionCardAnchorId(section, card),
+            });
+          })
+          .join("") +
         "</div>";
     } else if (section.type === "referenceIndex") {
       sectionBody = renderReferenceIndexSection(section);
     } else if (section.type === "pearls") {
       sectionBody =
         '<div class="pearl-grid">' +
-        section.cards.map(renderClinicalPearl).join("") +
+        section.cards
+          .map(function (card) {
+            return renderClinicalPearl(card, {
+              anchorId: getSectionCardAnchorId(section, card),
+            });
+          })
+          .join("") +
         "</div>";
     }
 
@@ -746,8 +839,9 @@
     return [
       '<div class="reference-grid">',
       cards
-        .map(function (card) {
+        .map(function (card, index) {
           return renderQuickReferenceCard(card, {
+            anchorId: getGeneratedCardAnchorId(section, card, index),
             primaryLabel: section.itemLabel || rendererConfig.labels.referenceIndexPrimary,
           });
         })
@@ -861,6 +955,19 @@
           applySelectedInfoBucketState(container);
         }
       });
+
+      container.addEventListener("click", function (event) {
+        if (container.getAttribute("data-collapsed") !== "true") {
+          return;
+        }
+
+        if (shouldIgnoreCollapsedContainerClick(event.target)) {
+          return;
+        }
+
+        setCollapsed(container, false);
+        applySelectedInfoBucketState(container);
+      });
     });
 
     anchorLinks.forEach(function (link) {
@@ -871,6 +978,18 @@
 
     window.addEventListener("hashchange", expandForCurrentHash);
     expandForCurrentHash();
+  }
+
+  function shouldIgnoreCollapsedContainerClick(target) {
+    if (!target || !target.closest) {
+      return false;
+    }
+
+    return Boolean(
+      target.closest(
+        "a, button, input, select, textarea, label, summary, [role='button'], [data-ignore-collapse-click]"
+      )
+    );
   }
 
   function expandForCurrentHash() {
@@ -963,10 +1082,18 @@
     });
   }
 
+  function collapseAllCollapsibleContent() {
+    var collapsibles = Array.prototype.slice.call(
+      document.querySelectorAll("[data-collapsible]")
+    );
+
+    collapsibles.forEach(function (collapsible) {
+      setCollapsed(collapsible, true);
+    });
+  }
+
   function resetCollapseState() {
-    collapseAllSections();
-    collapseAllEntries();
-    collapseAllInfoBlocks();
+    collapseAllCollapsibleContent();
     history.replaceState(null, "", "#top");
   }
 
@@ -1177,16 +1304,31 @@
   }
 
   function renderEntryCardBody(entry) {
+    var bodyParts = [];
+
+    if (entry.variants && entry.variants.length) {
+      bodyParts.push(renderEntryVariantContent(entry));
+    }
+
+    bodyParts.push(
+      renderInformationBlocks(entry, {
+        hideSubstances: Boolean(entry.variants && entry.variants.length),
+      })
+    );
+
     return [
       '<div class="entry-card__body">',
-      entry.variants ? renderVariantStack(entry) : renderInformationBlocks(entry),
-      entry.variants
-        ? renderInformationBlocks(entry, {
-            hideSubstances: true,
-          })
-        : "",
+      bodyParts.join(""),
       "</div>",
     ].join("");
+  }
+
+  function renderEntryVariantContent(entry) {
+    if (entry.variantsKind === "substances") {
+      return renderSubstanceVariantBlock(entry);
+    }
+
+    return renderVariantStack(entry);
   }
 
   function renderVariantStack(entry) {
@@ -1212,9 +1354,115 @@
     return [
       '<section class="variant-card"' +
         (variantAnchorId ? ' id="' + escapeHtml(variantAnchorId) + '"' : "") +
-        ">",
+        ' data-collapsible="variant" data-collapsed="true">',
+      '<div class="variant-card__header">',
+      renderCollapseToggleStart(variant.name, "variant", "variant-card__heading"),
+      '<span class="variant-card__heading-copy">',
       renderHeading("h5", variant.name),
+      "</span>",
+      renderCollapseChevron(),
+      "</button>",
+      "</div>",
+      '<div class="variant-card__body">',
       renderInformationBlocks(variant),
+      "</div>",
+      "</section>",
+    ].join("");
+  }
+
+  function renderSubstanceVariantBlock(entry) {
+    var bucketDefinition = getInfoBucketDefinition("substances");
+    var bodyParts = [];
+
+    if (shouldRenderStandaloneSubstanceList(entry)) {
+      bodyParts.push(renderPlainInfoList(entry.substances));
+    }
+
+    bodyParts.push(
+      '<div class="substance-card-list">' +
+        entry.variants
+          .map(function (variant) {
+            return renderSubstanceCard(entry, variant);
+          })
+          .join("") +
+        "</div>"
+    );
+
+    return renderInfoBlock(
+      bucketDefinition ? bucketDefinition.title : "Substanzen",
+      bucketDefinition ? bucketDefinition.tone : "substances",
+      bodyParts.join(""),
+      bucketDefinition ? bucketDefinition.kind : "substances"
+    );
+  }
+
+  function shouldRenderStandaloneSubstanceList(entry) {
+    if (!entry.substances || !entry.substances.length) {
+      return false;
+    }
+
+    if (!entry.variants || !entry.variants.length) {
+      return true;
+    }
+
+    return !matchesVariantNames(entry.substances, entry.variants);
+  }
+
+  function matchesVariantNames(substances, variants) {
+    var substanceNames = substances
+      .map(function (substance) {
+        return normalizeLookupKey(substance);
+      })
+      .sort();
+    var variantNames = variants
+      .map(function (variant) {
+        return normalizeLookupKey(variant.name);
+      })
+      .sort();
+
+    if (substanceNames.length !== variantNames.length) {
+      return false;
+    }
+
+    return substanceNames.every(function (substanceName, index) {
+      return substanceName === variantNames[index];
+    });
+  }
+
+  function renderSubstanceCard(parentEntry, variant) {
+    var variantAnchorId = getVariantAnchorId(parentEntry, variant);
+    var bodyParts = [];
+
+    if (variant.substances && variant.substances.length) {
+      bodyParts.push(
+        '<section class="substance-card__related-substances">' +
+          '<p class="substance-card__list-label">Weitere Substanzen</p>' +
+          renderPlainInfoList(variant.substances) +
+          "</section>"
+      );
+    }
+
+    bodyParts.push(
+      renderInformationBlocks(variant, {
+        hideSubstances: true,
+      })
+    );
+
+    return [
+      '<section class="substance-card"' +
+        (variantAnchorId ? ' id="' + escapeHtml(variantAnchorId) + '"' : "") +
+        ' data-collapsible="substance" data-collapsed="true">',
+      '<div class="substance-card__header">',
+      renderCollapseToggleStart(variant.name, "substance", "substance-card__heading"),
+      '<span class="substance-card__heading-copy">',
+      renderHeading("h5", variant.name),
+      "</span>",
+      renderCollapseChevron(),
+      "</button>",
+      "</div>",
+      '<div class="substance-card__body">',
+      bodyParts.join(""),
+      "</div>",
       "</section>",
     ].join("");
   }
@@ -1282,6 +1530,14 @@
         );
       })
       .join("");
+  }
+
+  function getInfoBucketDefinition(kind) {
+    return (
+      infoBucketNavigationItems.find(function (bucketDefinition) {
+        return bucketDefinition.kind === kind;
+      }) || null
+    );
   }
 
   function renderFactInfoList(items) {
@@ -1633,6 +1889,28 @@
     );
   }
 
+  function getSectionCardAnchorId(section, card) {
+    return (
+      "card-" +
+      escapeCardAnchorSegment(section.id) +
+      "-" +
+      escapeCardAnchorSegment(card.title || card.label || "item")
+    );
+  }
+
+  function getGeneratedCardAnchorId(section, card, index) {
+    return (
+      "card-" +
+      escapeCardAnchorSegment(section.id) +
+      "-" +
+      escapeCardAnchorSegment(card.title || card.label || "item-" + index)
+    );
+  }
+
+  function escapeCardAnchorSegment(text) {
+    return slugify(text || "item");
+  }
+
   function stripHeadingDetail(text) {
     return splitHeading(text).main;
   }
@@ -1732,7 +2010,9 @@
   }
 
   function setupActiveNavigation() {
-    var subLinks = Array.prototype.slice.call(document.querySelectorAll(".page-nav__sub-link"));
+    var subLinks = Array.prototype.slice.call(
+      document.querySelectorAll(".page-nav__sub-link[data-nav-target]")
+    );
     var sections = Array.prototype.slice.call(
       document.querySelectorAll(".content-section[data-nav-anchor]")
     );
