@@ -3,10 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Infektionsatlas</title>
+        <title>Pharma-Atlas</title>
         <meta
             name="description"
-            content="Lernübersicht zu Antibiotika, Antimykotika, Antiparasitika und Virostatika nach Gruppen, Substanzen und typischen Anwendungsgebieten."
+            content="Lernübersicht zu Arzneimittelkategorien im Pharma-Atlas mit klar getrennten Datenquellen pro Kategorie."
         />
         <link rel="stylesheet" href="src/styles.css" />
     </head>
@@ -14,7 +14,7 @@
         <div class="page-shell">
             <aside class="side-panel">
                 <div class="side-panel__brand">
-                    <p class="eyebrow">Infektionsatlas</p>
+                    <p class="eyebrow">Pharma-Atlas</p>
                     <h1>Navigation</h1>
                     <p class="side-panel__intro"></p>
                 </div>
@@ -28,16 +28,43 @@
                 ></nav>
             </aside>
 
-            <main class="content">
-                <header class="hero panel" id="top" data-nav-anchor>
-                    <div class="hero__copy" id="hero-copy"></div>
-                </header>
-
+            <main class="content" id="top">
                 <section class="group-library" id="group-library"></section>
             </main>
         </div>
 
-        <script src="src/data/antibioticData.js"></script>
+        <script src="src/data/shared.js"></script>
+        <script src="src/data/categories/antibiotika/semanticTags.js"></script>
+        <script src="src/data/categories/antibiotika/learning.js"></script>
+        <script src="src/data/categories/antibiotika/groups/aeussere-begrenzungen.js"></script>
+        <script src="src/data/categories/antibiotika/groups/nukleinsaeure-und-enzym.js"></script>
+        <script src="src/data/categories/antibiotika/groups/bakterielle-ribosomen.js"></script>
+        <script src="src/data/categories/antibiotika/groups/folsaeuremetabolismus.js"></script>
+        <script src="src/data/categories/antibiotika/index.js"></script>
+        <script src="src/data/categories/antimykotika/semanticTags.js"></script>
+        <script src="src/data/categories/antimykotika/learning.js"></script>
+        <script src="src/data/categories/antimykotika/groups/azol-antimykotika.js"></script>
+        <script src="src/data/categories/antimykotika/groups/polyen-antimykotika.js"></script>
+        <script src="src/data/categories/antimykotika/groups/echinocandine.js"></script>
+        <script src="src/data/categories/antimykotika/groups/weitere-antimykotika.js"></script>
+        <script src="src/data/categories/antimykotika/index.js"></script>
+        <script src="src/data/categories/antiparasitika/semanticTags.js"></script>
+        <script src="src/data/categories/antiparasitika/learning.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/antiprotozoika.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/anthelminthika.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/ektoparasitizide.js"></script>
+        <script src="src/data/categories/antiparasitika/index.js"></script>
+        <script src="src/data/categories/virostatika/semanticTags.js"></script>
+        <script src="src/data/categories/virostatika/learning.js"></script>
+        <script src="src/data/categories/virostatika/groups/herpesviridae.js"></script>
+        <script src="src/data/categories/virostatika/groups/influenzaviren.js"></script>
+        <script src="src/data/categories/virostatika/groups/hiv-therapie.js"></script>
+        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c.js"></script>
+        <script src="src/data/categories/virostatika/index.js"></script>
+        <script src="src/data/categories/immunsuppressiva/semanticTags.js"></script>
+        <script src="src/data/categories/immunsuppressiva/learning.js"></script>
+        <script src="src/data/categories/immunsuppressiva/index.js"></script>
+        <script src="src/data/atlasCollection.js"></script>
         <script src="src/app.js"></script>
     </body>
 </html>

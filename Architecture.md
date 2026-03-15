@@ -2,110 +2,137 @@
 
 ## Overview
 
-This project is a small static single-page website that turns the raw notes in `Antibiotika.md`, `Antimykotika.md`, `Antiparasitika.md`, and `Virostatika.md` into structured learning references. The page supports four topic libraries that share the same renderer and visual system. Each library is built around explicit overgroups, each of which owns its own second-level sections. The published website lives inside `docs/` so GitHub Pages can serve one explicit folder while repository Markdown files stay outside the site.
+This project is a small static single-page website that presents a growing **Pharma-Atlas**. The page stays renderer-driven, but the medical content is no longer stored in one monolithic file. Instead, every drug category owns its own folder with a small composition file and smaller content parts so the data stays readable, reviewable, and directly editable by humans.
+
+The current atlas contains:
+
+- `Antibiotika`
+- `Antimykotika`
+- `Antiparasitika`
+- `Virostatika`
+- `Immunsuppressiva` as an empty scaffold for the next expansion step
 
 ## Main Building Blocks
 
 ### `docs/index.html`
 
-Provides the page shell and the mounting points for the topic switcher, the header, the two-step navigation, and the overgroup content panels.
+Provides the static page shell and loads the data files in explicit order:
 
-### `docs/src/data/antibioticData.js`
+1. shared schema and renderer configuration
+2. one category file per drug category
+3. the collection composition root
+4. the renderer
 
-Contains the canonical website content in one explicit collection centered on `libraries`:
+### `docs/src/data/shared.js`
 
-- one library for `Antibiotika`
-- one library for `Antimykotika`
-- one library for `Antiparasitika`
-- one library for `Virostatika`
-- one shared renderer configuration for labels, info buckets, semantic tags, and learning-link aliases
-- page metadata per library
-- theme colors per library and per overgroup
-- optional focused support overgroups such as `Anhand Erreger` and `Prägemuster`
-- topic-specific overgroups and second-level sections inside each library
-- optional short summaries on overgroups, sections, and cards
-- cards or entries inside each section
-- compact pattern cards with a label plus editable bullet items
-- optional `substances` lists on entries and variants
-- optional `sideEffects` lists on entries and variants
-- optional `mechanism` lists on entries and variants
-- optional `otherInfo` lists on entries and variants
-- stable anchor targets for entries and variants, derived by the renderer
-- collapsible section blocks, Wirkstoffgruppe cards, and card-internal info blocks, with all starting collapsed and header rows acting as the toggle surface
-- global reset control that restores the initial collapsed page state
-- fact items with `main`, optional `detail`, and optional muted-note presentation
+Contains the shared editing vocabulary:
 
-This file is the intended editing surface for future content changes.
+- `fact(...)` for editable fact rows
+- `referenceItem(...)` for explicit learning-link rows
+- `getCategoryParts(...)` for assembling one category from smaller files
+- shared themes
+- shared renderer labels
+- info-bucket definitions
+
+This file is the only shared data dependency that category files import indirectly through the global `window.pharmaAtlasShared` object.
+
+### `docs/src/data/categories/<category>/...`
+
+Each category folder owns exactly one atlas category. The folder is split into:
+
+- `index.js`: small category composition root
+- `semanticTags.js`: tags used only by this category
+- `learning.js`: top learning/support overgroup
+- `groups/*.js`: one file per pharmacology overgroup
+
+Each group file contains only the sections and entries for that overgroup.
+
+Example:
+
+- `docs/src/data/categories/antibiotika/index.js`
+- `docs/src/data/categories/antibiotika/semanticTags.js`
+- `docs/src/data/categories/antibiotika/learning.js`
+- `docs/src/data/categories/antibiotika/groups/*.js`
+
+### `docs/src/data/atlasCollection.js`
+
+Composes the shared renderer configuration and the ordered category list into one explicit public collection: `window.pharmaAtlasCollection`.
+
+This is the only composition root for site data.
 
 ### `docs/src/app.js`
 
-Reads the central library collection, selects the active topic library from the `?thema=` query parameter, reads the shared renderer configuration, renders all visible sections, wires the active state for the two-step navigation, manages collapsible section blocks, Wirkstoffgruppe cards, and nested info blocks, starts them collapsed by default, expands only the relevant target path when navigation targets are used, and exposes a global reset control for returning to the initial collapsed page state. It also renders the topic switcher, updates document metadata per library, applies library and overgroup theme colors as CSS variables, derives semantic tags from renderer-configured definitions, renders compact pattern cards as bullet lists, renders info buckets from renderer-configured bucket definitions, resolves learning-card items to linked Wirkstoffgruppen through renderer-configured aliases, and promotes larger variant families into wider left-to-right layouts. It does not contain domain facts itself; it only transforms data into HTML.
+Reads `window.pharmaAtlasCollection`, resolves the active category from the query parameter, resolves the active page view (`Start` or one selected overgroup), renders navigation and content, manages collapsible UI state, persists the selected auto-expand buckets in browser storage, and builds learning cross-links.
+
+It also supports two kinds of top reference sections:
+
+- `quickReference`: manually curated cards such as existing pathogen overviews
+- `referenceIndex`: automatically generated cards derived from entry or variant data such as `indications`
+
+Entry sections can optionally hide their own visible heading when they only serve as an internal grouping layer. This keeps categories with flatter structures aligned with the same renderer without forcing redundant intermediate boxes.
+
+Learning links are now explicit. When a visible label should point to a different entry name, the data uses `referenceItem(...)` instead of a hidden global alias list.
 
 ### `docs/src/styles.css`
 
-Defines the shared visual system, responsive layout, topic-specific accents, and the semantic color system for quick-glance fact tags. Styling depends on renderer-provided CSS custom properties, generic classes, and semantic tag classes instead of hardcoded topic IDs, so content and presentation stay loosely coupled.
-
-### `docs/.nojekyll`
-
-Ensures GitHub Pages serves the `docs/` folder as a plain static site without Jekyll processing.
+Contains the shared visual system, responsive layout, and bucket styling. Styling depends on generic classes and theme variables, not on category-specific markup forks.
 
 ## Responsibilities And Boundaries
 
-- `Antibiotika.md`, `Antimykotika.md`, `Antiparasitika.md`, and `Virostatika.md` are the raw source note sets.
-- `docs/src/data/antibioticData.js` is the structured website content collection.
-- `docs/src/app.js` is the only place that converts content into DOM markup.
-- `docs/src/styles.css` is the only place that decides layout, color, spacing, and responsive behavior.
-- `docs/` is the only folder GitHub Pages should publish.
+- `docs/src/data/shared.js` defines the shared schema and renderer vocabulary.
+- Each category folder in `docs/src/data/categories/` defines one category and only that category.
+- `docs/src/data/atlasCollection.js` only assembles existing pieces; it does not own medical facts.
+- `docs/src/app.js` only renders the public data shape; it does not contain domain content.
+- `docs/src/styles.css` only owns presentation.
 
-The renderer must only consume the public shape of the `renderer`, `libraries`, and `overgroups` data. Styling must only rely on generic classes and CSS custom properties that the renderer derives from data. Primary learning statements and secondary bracket-style details are separated in data so presentation can emphasize them differently without changing content.
+Medical content must live only in the category data files. There are no separate root Markdown note sources anymore.
 
 ## Data Flow
 
 1. The browser loads `docs/index.html`.
-2. `docs/src/data/antibioticData.js` defines `window.medicationLibraryCollection` with both content and renderer configuration.
-3. `docs/src/app.js` selects the active library, reads the renderer configuration, builds the topic switcher and two-step navigation, and fills the page placeholders.
-4. CSS applies layout and group-specific visual treatment.
+2. `docs/src/data/shared.js` defines the shared schema and renderer configuration.
+3. Each file inside a category folder registers one category part in `window.pharmaAtlasCategoryParts`.
+4. Each category `index.js` composes those parts into one category in `window.pharmaAtlasCategories`.
+5. `docs/src/data/atlasCollection.js` assembles the ordered category list in `window.pharmaAtlasCollection`.
+6. `docs/src/app.js` selects the active category from `?kategorie=` with backward-compatible support for `?thema=`.
+7. `docs/src/app.js` selects the active content view from `?gruppe=` or, for older deep links, infers the correct overgroup from the current hash.
+8. The renderer builds either:
+   - the category start overview with compact group and Wirkstoffgruppen summaries
+   - or exactly one selected overgroup with its full sections and cards
+9. The renderer still builds generated `referenceIndex` sections such as future indication-based overviews.
 
 There is no build step, no backend, and no runtime fetching.
 
 ## Folder Structure
 
-- `Antibiotika.md`: original source notes for the antibiotic library
-- `Antimykotika.md`: original source notes for the antifungal library
-- `Antiparasitika.md`: original source notes for the antiparasitic library
-- `Virostatika.md`: original source notes for the antiviral library
-- `docs/index.html`: static page shell for the published site
-- `docs/src/data/antibioticData.js`: editable structured content collection
-- `docs/src/app.js`: renderer and navigation behavior
-- `docs/src/styles.css`: visual system and responsive layout
+- `docs/index.html`: published page shell
+- `docs/src/data/shared.js`: shared schema, labels, themes, and generic helper functions
+- `docs/src/data/categories/<category>/index.js`: category composition root
+- `docs/src/data/categories/<category>/semanticTags.js`: category-specific tags
+- `docs/src/data/categories/<category>/learning.js`: category learning overgroup
+- `docs/src/data/categories/<category>/groups/*.js`: one group file per overgroup
+- `docs/src/data/atlasCollection.js`: category composition root
+- `docs/src/app.js`: generic renderer, category/start-view navigation, and interaction logic
+- `docs/src/styles.css`: shared visual system
 - `docs/.nojekyll`: GitHub Pages static-site marker
-- root `*.md` files: repository documentation and source notes, intentionally outside the published site
 
 ## Constraints
 
-- Keep content changes concentrated in `docs/src/data/antibioticData.js`.
-- Keep site files inside `docs/` so GitHub Pages can publish one explicit folder.
-- Keep rendering logic simple and data-driven.
-- Keep the shared renderer generic enough to handle all topic libraries without topic-specific HTML forks or hardcoded domain mappings.
-- Keep navigation aligned with the content model: overgroup first, section second.
-- Keep optional support sections explicit instead of mixing them into pharmacology groups.
-- Keep Markdown source and documentation files at the repository root so they stay outside the published site.
-- Preserve the four top-level antibiotic groups:
-  - Äußere Begrenzungen
-  - Nukleinsäure und zugehörige Enzyme
-  - Bakterielle Ribosomen
-  - Folsäuremetabolismus
-- Preserve the four top-level antimycotic groups:
-  - Azol-Antimykotika
-  - Polyen-Antimykotika
-  - Echinocandine
-  - Weitere Antimykotika
-- Preserve the three top-level antiparasitic groups:
-  - Antiprotozoika
-  - Anthelminthika
-  - Ektoparasitizide
-- Preserve the three top-level antiviral groups:
-  - Antivirale Pharmaka gegen Herpesviridae
-  - Antivirale Pharmaka gegen Influenzaviren
-  - Antiretrovirale Therapie bei HIV
-  - Antivirale Pharmaka gegen Hepatitis B und C
+- Keep `shared.js` generic. Category-specific tags or learning-link rules do not belong there.
+- Keep one category folder per category, with a small `index.js` and smaller content files below it.
+- Keep category part files focused on content, not rendering logic.
+- Keep top “turned around” views data-driven:
+  - existing curated pathogen views may stay `quickReference`
+  - new indication-based views should use `referenceIndex`
+- Keep the section layer optional in the UI:
+  - use visible sections when they add real grouping value
+  - use hidden sections only as a technical composition layer for direct entry-card rendering
+- Keep category navigation query-driven:
+  - `?kategorie=` selects the category
+  - `?gruppe=` selects one overgroup
+  - no `?gruppe=` means the category start overview
+- Keep learning links explicit when labels intentionally differ from entry names.
+- Keep cross-group learning links route-aware so links still work when only one overgroup is rendered.
+- Keep `indications` optional so legacy categories do not need placeholder data.
+- Keep all medical source data inside `docs/src/data/categories/`.
+- Keep the site static and GitHub-Pages-compatible.

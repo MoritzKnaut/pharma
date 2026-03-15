@@ -2,151 +2,107 @@
 
 ## Overview
 
-The website is a compact learning reference for four anti-infective topic libraries:
+The website is a compact **Pharma-Atlas** for clearly separated drug categories. It currently provides five selectable categories:
 
 - `Antibiotika`
 - `Antimykotika`
 - `Antiparasitika`
 - `Virostatika`
+- `Immunsuppressiva`
 
-All libraries use the same single-page interaction model: first an overgroup, then the concrete section inside that overgroup.
+`Immunsuppressiva` is intentionally still empty. The structure is present so the next data expansion can happen directly in its own category file.
 
 ## Core Features
 
-### Topic Switcher
+### Category Switcher
 
-The page provides a topic switcher in the left sidebar. It swaps the complete content library while keeping the same layout, collapsible behavior, and navigation model. The active topic is selected via the `?thema=` query parameter.
+The left sidebar switches the entire atlas category. The active category is selected through the query parameter `?kategorie=`. Existing links with `?thema=` continue to work.
 
-### Antibiotic Library
+### Start View And Group Selection
 
-The antibiotic content remains organized into the four requested groups:
+Each category now opens in a compact `Start` view. This page shows the available groups and their Wirkstoffgruppen in summary form so the user can pick a focused path first.
 
-- Äußere Begrenzungen
-- Nukleinsäure und zugehörige Enzyme
-- Bakterielle Ribosomen
-- Folsäuremetabolismus
+Selecting a group in the left navigation switches the page to that one overgroup only. The full content for other groups is no longer rendered at the same time. The `Start` view remains selectable in the navigation so the user can return to the overview at any point.
 
-It also keeps the dedicated learning overgroup with `Anhand Erreger` and `Prägemuster`.
+### Category-Specific Data Files
 
-### Antimycotic Library
+Each category is edited in its own folder under `docs/src/data/categories/`. The content is split into smaller files for learning sections, semantic tags, and pharmacology groups. There are no separate medication Markdown source files anymore.
 
-The antimycotic content is organized into four groups:
+### Learning Overviews
 
-- Azol-Antimykotika
-- Polyen-Antimykotika
-- Echinocandine
-- Weitere Antimykotika
+Categories can expose a top “turned around” view in two ways:
 
-It uses one focused support section: `Anhand Erreger`.
+- manually curated `quickReference` sections, currently used for existing `Anhand Erreger` overviews
+- generated `referenceIndex` sections, intended for new categories such as indication-based views
 
-The antimycotic library stays intentionally compact and shows only:
+This allows the atlas to keep classic pathogen-based overviews while adding future disease/indication-driven views without duplicating medication facts across multiple files.
 
-- the four main antifungal groups
-- each group’s main Wirkort
-- the relevant Wirkstoffe inside those groups
-- the most important target patterns such as Hefen, Schimmelpilze, Dermatophyten, Aspergillose, Kryptokokkose, and Onychomykosen
+Learning links are explicit in the data. When a visible label should point to a differently named entry, that row carries its own target instead of relying on hidden global alias rules.
 
-### Antiparasitic Library
+### Medication Cards
 
-The antiparasitic content is organized into three groups:
+Entry and variant cards can show these information buckets when data exists:
 
-- Antiprotozoika
-- Anthelminthika
-- Ektoparasitizide
+- `Substanzen`
+- `Indikationen`
+- `Wirksamkeit`
+- `Nebenwirkungen`
+- `Wirkmechanismus`
+- `Merke`
+- `Sonstiges`
 
-It uses one focused support section: `Anhand Erreger`.
+Legacy categories do not need `Indikationen`. The bucket stays hidden unless data is present.
 
-The antiparasitic library stays intentionally compact and shows only:
+## Behavior And Rules
 
-- the main antiparasitic groups
-- the relevant substances inside those groups
-- the central mechanisms where they are explicitly given in the source
-- the most important target patterns such as Protozoen, Nematoden, Cestoden, Trematoden, Skabies, Läuse, and Malaria
+- Navigation is now view-based at the category level:
+  - first the `Start` view or one overgroup
+  - then the section inside the selected overgroup
+- The selected overgroup is stored in `?gruppe=`.
+- The main content starts directly with the overview cards or the selected group panel. There is no separate hero panel.
+- Older deep links without `?gruppe=` still open the correct overgroup when the hash points to a section, entry, or variant.
+- Selected group pages use one outer content panel on the right side, with the group header rendered inside that panel.
+- On desktop, the left navigation keeps the full viewport height and scrolls internally when its content is longer than the screen.
+- The shared shell stays visually neutral across categories. Accent colors are used on the concrete overgroups instead of on whole categories.
+- Section blocks, reference cards, entry cards, and info buckets start collapsed.
+- The section layer is only shown when it adds real structure. Flatter categories can render their entry cards directly without an extra intermediate heading box.
+- If a section would otherwise contain exactly one entry with the same title, that content is rendered directly in the section so the user does not have to expand the same label twice.
+- Wirkstoffgruppe cards use the full available section width. If they contain subgroup/variant cards across two rows, those rows are balanced as evenly as possible.
+- Global expand/collapse controls still work.
+- The `Automatisch ausklappen` controls remain visible in the navigation in every view, including the `Start` view, keep their active state while navigating, and are applied again after navigation or hash-based deep links.
+- In-page learning links still expand the required parents first and then scroll to the target.
+- Cross-group learning links switch to the correct overgroup before jumping to the target entry.
+- Generated `referenceIndex` sections derive their cards directly from entry or variant fields such as `indications`.
+- Existing manual `Anhand Erreger` overviews stay available where they already add value.
+- Group labels stay consistent across navigation, overview cards, and page metadata by using the overgroup title as the canonical heading.
 
-### Antiviral Library
+## Current Category Scope
 
-The antiviral content is organized into four groups:
+### Antibiotika
 
-- Antivirale Pharmaka gegen Herpesviridae
-- Antivirale Pharmaka gegen Influenzaviren
-- Antiretrovirale Therapie bei HIV
-- Antivirale Pharmaka gegen Hepatitis B und C
+Keeps the existing pharmacology structure and the curated learning sections `Anhand Erreger` and `Prägemuster`.
 
-It uses one focused support section: `Anhand Erreger`.
+### Antimykotika
 
-The antiviral library stays intentionally compact and shows only:
+Keeps the existing four antifungal groups and the curated `Anhand Erreger` overview.
 
-- the main antiviral target areas from the source chapter
-- the most important substances and substance groups
-- core mechanisms where they are central for understanding
-- the most important target patterns such as Herpes simplex, Varizella zoster, CMV, Influenza A/B, HIV, Hepatitis B, and Hepatitis C
+### Antiparasitika
 
-### Learning Overgroups
+Keeps the existing antiparasitic groups and the curated `Anhand Erreger` overview.
 
-Support material stays in explicit learning overgroups where it adds value. The antibiotic library uses `Anhand Erreger` and `Prägemuster`; the antimycotic, antiparasitic, and antiviral libraries currently use only `Anhand Erreger`.
+### Virostatika
 
-The learning sections use linked cards so relevant items jump into the matching Wirkstoffgruppe cards whenever a target exists.
+Keeps the existing antiviral groups and the curated `Anhand Erreger` overview.
 
-## Behavior And Presentation Rules
+### Immunsuppressiva
 
-- Navigation is single-page, anchor-based, and two-step:
-  - first the overgroup
-  - then the section inside that overgroup
-- The topic switcher changes the active library and reloads the page with the matching `?thema=` parameter.
-- Section blocks can be collapsed and expanded by clicking their full header row.
-- The compact overview cards can also be collapsed and expanded by clicking their full header row.
-- Wirkstoffgruppe cards can also be collapsed and expanded by clicking their full header row.
-- The card-internal content buckets can also be collapsed and expanded by clicking their full header row.
-- The dedicated collapse button text is replaced by a chevron indicator.
-- Section blocks start collapsed by default.
-- Wirkstoffgruppe cards also start collapsed by default.
-- Card-internal content buckets also start collapsed by default.
-- Navigation into a section collapses the other section blocks and expands only the relevant target path.
-- Clicking the same section navigation link again collapses that section back.
-- In-page links expand the necessary parents first and then scroll to the linked target so the final position stays correct.
-- Global `Alles ausklappen` and `Alles einklappen` actions in the left navigation expand or restore the full collapsed state for sections, Wirkstoffgruppen, and card-internal content buckets.
-- Each top-level overgroup also provides local `Alles ausklappen` and `Alles einklappen` actions for just that group’s content.
-- Below the navigation links, bucket bubbles such as `Substanzen`, `Wirksamkeit`, or `Wirkmechanismus` can be activated to auto-expand those matching content buckets whenever a section path is opened.
-- The visible bucket labels, auto-expand options, semantic badges, and learning-link aliases come from the central data model so the renderer can stay generic while the displayed structure stays unchanged.
-- The main library and overgroup colors also come from the central data model so topic-specific theming does not require stylesheet branches per topic.
-- The left navigation highlights the active section and its parent overgroup based on the current viewport position, including short pages and near-page-end states.
-- Facts inside cards are shown with strong visual hierarchy:
-  - primary learning statement first
-  - additional example or bracket-style detail below it with less emphasis
-- Bracket-style detail is only used for true add-on information; the main line always needs to stand on its own.
-- Helper copy around sections and cards stays minimal and visually muted so the names and facts remain dominant.
-- Top-level overgroups use a single visible heading line instead of stacked kicker-plus-title headings.
-- The left navigation uses the same top-level headings as the visible overgroup headers instead of a separate label-plus-detail combination.
-- Parenthetical subtitle styling is reserved for compact overview cards; Wirkstoffgruppen and subgroups keep one direct heading line for cleaner alignment.
-- Key learning categories such as grampositive, gramnegative, anaerobe, atypische, Hefen, Schimmelpilze, Dermatophyten, Kryptokokken, Nematoden, Cestoden, Trematoden, Skabies, Herpes, Influenza, or Hepatitis are color-coded so they can be recognized at a glance.
-- Each Wirkstoffgruppe card shows content in consistent buckets:
-  - Substanzen
-  - Wirksamkeit
-  - Nebenwirkungen
-  - Wirkmechanismus
-  - Merke
-  - Sonstiges
-- `Grenzen` is no longer a standalone bucket. It appears as a clearly highlighted warning subsection inside `Wirksamkeit`.
-- `Nebenwirkungen` and `Wirkmechanismus` are shown only when the respective card actually contains content.
-- The `Substanzen` box stays visually muted and lists only a few important example agents for quick orientation.
-- The `Sonstiges` box is even quieter, including its text content, and sits at the bottom of cards as a secondary footer-style block.
-- Wirkstoffgruppen use a responsive grid that stays stable across wide and narrow screens.
-- Longer Wirkstoffgruppen and subgroup titles reserve consistent heading space so neighboring cards stay aligned more reliably.
-- The page uses a deliberately clean, simple visual style, spreads content across the available browser width, and works without a build process.
-
-## Publishing Contract
-
-- GitHub Pages should publish the `docs/` directory.
-- The published website files live in:
-  - `docs/index.html`
-  - `docs/src/app.js`
-  - `docs/src/styles.css`
-  - `docs/src/data/antibioticData.js`
-- Repository-only Markdown files such as `Architecture.md`, `Description.md`, `Antibiotika.md`, `Antimykotika.md`, `Antiparasitika.md`, and `Virostatika.md` stay at the repository root and are not part of the published site.
+Provides the empty scaffold for the next category. It already includes an automatically generated top section `Anhand Indikationen`, which currently shows an empty-state message until data is added.
 
 ## Editing Contract
 
-- Future content edits should normally happen in `docs/src/data/antibioticData.js`.
-- Renderer-facing labels, semantic tag definitions, info-bucket definitions, learning-link aliases, and theme colors also live in `docs/src/data/antibioticData.js`.
-- `Antibiotika.md`, `Antimykotika.md`, `Antiparasitika.md`, and `Virostatika.md` remain the original note sources and reference texts.
-- The site is presented as a learning overview and does not claim to replace therapy guidelines.
+- Future content edits should happen in the category folders under `docs/src/data/categories/`.
+- Shared labels, bucket definitions, themes, and generic helper functions live in `docs/src/data/shared.js`.
+- Category-specific semantic tags live beside the category they belong to.
+- New categories should get their own dedicated folder and be added to `docs/src/data/atlasCollection.js`.
+- New indication-based top views should be modeled through `indications` data on entries or variants plus a `referenceIndex` section.
+- The site is a learning overview and does not replace therapy guidelines.

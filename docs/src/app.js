@@ -1,155 +1,214 @@
 (function () {
-  var collection = getLibraryCollection();
-  var library = resolveCurrentLibrary(collection);
+  var INFO_BUCKET_STORAGE_KEY = "pharmaAtlas.autoExpandBuckets";
+  var collection = window.pharmaAtlasCollection;
+  var category = resolveCurrentCategory(collection);
 
-  if (!library) {
+  if (!collection || !collection.categories || !collection.categories.length || !category) {
     return;
   }
 
-  var rendererConfig = resolveRendererConfig(collection, library);
-  var librarySwitcher = document.getElementById("library-switcher");
+  var currentView = resolveCurrentView(category);
+  var rendererConfig = resolveRendererConfig(collection, category);
+  var categorySwitcher = document.getElementById("library-switcher");
   var sidePanelIntro = document.querySelector(".side-panel__intro");
-  var heroCopy = document.getElementById("hero-copy");
   var pageNav = document.getElementById("page-nav");
   var groupLibrary = document.getElementById("group-library");
-  var learningLinkLookup = buildLearningLinkLookup(library.overgroups);
+  var learningLinkLookup = buildLearningLinkLookup(category.overgroups);
   var infoBucketNavigationItems = rendererConfig.infoBuckets || [];
 
-  updateDocumentMetadata(library);
+  updateDocumentMetadata(category, currentView);
 
-  if (librarySwitcher) {
-    librarySwitcher.innerHTML = renderLibrarySwitcher(collection, library);
+  if (categorySwitcher) {
+    categorySwitcher.innerHTML = renderCategorySwitcher(collection, category);
   }
 
   if (sidePanelIntro) {
-    sidePanelIntro.textContent = library.page.navIntro || library.page.description || "";
+    sidePanelIntro.hidden = true;
   }
 
-  heroCopy.innerHTML = [
-    '<div class="hero__header-row">',
-    '<div class="hero__heading-group">',
-    "<h2>" + escapeHtml(library.page.title) + "</h2>",
-    library.page.subtitle
-      ? '<p class="hero__subtitle">' + escapeHtml(library.page.subtitle) + "</p>"
-      : "",
-    library.page.intro ? "<p>" + escapeHtml(library.page.intro) + "</p>" : "",
-    "</div>",
-    "</div>",
-  ].join("");
+  if (pageNav) {
+    pageNav.innerHTML = renderPageNav(category.overgroups, currentView);
+  }
 
-  pageNav.innerHTML = renderPageNav(library.overgroups);
-  groupLibrary.innerHTML = library.overgroups.map(renderOvergroupPanel).join("");
+  if (groupLibrary) {
+    groupLibrary.innerHTML = renderMainContent(category, currentView);
+  }
 
   setupCollapsibleSections();
   setupGlobalCollapseButtons();
   setupInfoBucketButtons();
-  setupOvergroupActionButtons();
-  setupActiveNavigation(library.overgroups);
+  setupActiveNavigation();
 
-  function getLibraryCollection() {
-    if (
-      window.medicationLibraryCollection &&
-      window.medicationLibraryCollection.libraries &&
-      window.medicationLibraryCollection.libraries.length
-    ) {
-      return window.medicationLibraryCollection;
-    }
-
-    if (window.antibioticLibrary) {
-      return {
-        defaultLibraryId: "antibiotika",
-        renderer: window.antibioticLibrary.renderer,
-        libraries: [
-          Object.assign(
-            {
-              id: "antibiotika",
-              label: "Antibiotika",
-            },
-            window.antibioticLibrary
-          ),
-        ],
-      };
-    }
-
-    return { defaultLibraryId: "", libraries: [] };
-  }
-
-  function resolveCurrentLibrary(currentCollection) {
-    var libraries = currentCollection.libraries || [];
+  function resolveCurrentCategory(currentCollection) {
+    var categories = (currentCollection && currentCollection.categories) || [];
+    var defaultCategoryId = currentCollection && currentCollection.defaultCategoryId;
     var params = new URLSearchParams(window.location.search);
-    var requestedLibraryId = params.get("thema");
-    var matchedLibrary = libraries.find(function (item) {
-      return item.id === requestedLibraryId;
+    var requestedCategoryId = params.get("kategorie") || params.get("thema");
+    var matchedCategory = categories.find(function (item) {
+      return item.id === requestedCategoryId;
     });
 
-    if (matchedLibrary) {
-      return matchedLibrary;
+    if (matchedCategory) {
+      return matchedCategory;
     }
 
     return (
-      libraries.find(function (item) {
-        return item.id === currentCollection.defaultLibraryId;
-      }) || libraries[0]
+      categories.find(function (item) {
+        return item.id === defaultCategoryId;
+      }) || categories[0]
     );
   }
 
-  function resolveRendererConfig(currentCollection, currentLibrary) {
+  function resolveCurrentView(currentCategory) {
+    var params = new URLSearchParams(window.location.search);
+    var requestedOvergroupId = params.get("gruppe");
+    var requestedOvergroup = findOvergroupById(currentCategory.overgroups, requestedOvergroupId);
+    var hashOvergroup = findOvergroupByHash(currentCategory, window.location.hash);
+
+    if (requestedOvergroup) {
+      return {
+        isOverview: false,
+        activeOvergroup: requestedOvergroup,
+      };
+    }
+
+    if (hashOvergroup) {
+      return {
+        isOverview: false,
+        activeOvergroup: hashOvergroup,
+      };
+    }
+
+    return {
+      isOverview: true,
+      activeOvergroup: null,
+    };
+  }
+
+  function findOvergroupById(overgroups, overgroupId) {
+    if (!overgroupId) {
+      return null;
+    }
+
+    return (
+      overgroups.find(function (overgroup) {
+        return overgroup.id === overgroupId;
+      }) || null
+    );
+  }
+
+  function findOvergroupByHash(currentCategory, hash) {
+    var targetId;
+
+    if (!hash || hash === "#top") {
+      return null;
+    }
+
+    targetId = hash.replace(/^#/, "");
+
+    return (
+      currentCategory.overgroups.find(function (overgroup) {
+        if (overgroup.id === targetId) {
+          return true;
+        }
+
+        return overgroup.sections.some(function (section) {
+          if (section.id === targetId) {
+            return true;
+          }
+
+          if (!section.entries) {
+            return false;
+          }
+
+          return section.entries.some(function (entry) {
+            if (getEntryAnchorId(entry) === targetId) {
+              return true;
+            }
+
+            return Boolean(
+              entry.variants &&
+                entry.variants.some(function (variant) {
+                  return getVariantAnchorId(entry, variant) === targetId;
+                })
+            );
+          });
+        });
+      }) || null
+    );
+  }
+
+  function resolveRendererConfig(currentCollection, currentCategory) {
     var collectionRenderer = currentCollection.renderer || {};
-    var libraryRenderer = currentLibrary.renderer || {};
+    var categoryRenderer = currentCategory.renderer || {};
 
     return {
       labels: Object.assign(
         {
-          librarySwitcher: "Thema",
+          librarySwitcher: "Kategorie",
+          startView: "Start",
           pageControls: "Seitensteuerung",
           autoExpand: "Automatisch ausklappen",
           expandAll: "Alles ausklappen",
           collapseAll: "Alles einklappen",
-          entryEyebrow: "Eintrag",
-          pearlEyebrow: "Hinweis",
+          entryEyebrow: "Wirkstoffgruppe",
+          pearlEyebrow: "Merksatz",
           quickReferencePrimary: "Inhalte",
+          referenceIndexPrimary: "Medikamente",
           learningFocusFallback: "Fokus",
           learningWarningFallback: "Hinweise",
+          emptyReferenceIndex: "Noch keine Einträge vorhanden.",
+          overviewEmptyState: "Noch keine Inhalte vorhanden.",
         },
         collectionRenderer.labels || {},
-        libraryRenderer.labels || {}
+        categoryRenderer.labels || {}
       ),
-      infoBuckets: libraryRenderer.infoBuckets || collectionRenderer.infoBuckets || [],
-      semanticTags: libraryRenderer.semanticTags || collectionRenderer.semanticTags || [],
-      learningLinkAliases:
-        libraryRenderer.learningLinkAliases ||
-        collectionRenderer.learningLinkAliases ||
-        [],
+      infoBuckets: categoryRenderer.infoBuckets || collectionRenderer.infoBuckets || [],
+      semanticTags: categoryRenderer.semanticTags || [],
     };
   }
 
-  function updateDocumentMetadata(currentLibrary) {
-    document.title = currentLibrary.page.title;
+  function updateDocumentMetadata(currentCategory, view) {
+    var activeOvergroup = view.activeOvergroup;
+    var documentTitle = currentCategory.page.documentTitle || currentCategory.page.title;
+
+    if (activeOvergroup) {
+      documentTitle =
+        getOvergroupHeading(activeOvergroup) +
+        " | " +
+        currentCategory.page.title +
+        " | Pharma-Atlas";
+    } else {
+      documentTitle = documentTitle + " | Pharma-Atlas";
+    }
+
+    document.title = documentTitle;
 
     var descriptionMeta = document.querySelector('meta[name="description"]');
 
-    if (descriptionMeta && currentLibrary.page.description) {
-      descriptionMeta.setAttribute("content", currentLibrary.page.description);
+    if (descriptionMeta && currentCategory.page.description) {
+      descriptionMeta.setAttribute("content", currentCategory.page.description);
     }
 
-    document.body.setAttribute("data-library", currentLibrary.id);
-    setThemeVariables(document.body, currentLibrary.theme, "library");
+    document.body.setAttribute("data-category", currentCategory.id);
+    document.body.setAttribute("data-library", currentCategory.id);
+    document.body.setAttribute("data-view", activeOvergroup ? activeOvergroup.id : "start");
   }
 
-  function renderLibrarySwitcher(currentCollection, currentLibrary) {
+  function renderCategorySwitcher(currentCollection, currentCategory) {
     return [
-      '<section class="library-switcher" aria-label="Thema auswählen">',
+      '<section class="library-switcher" aria-label="Kategorie auswählen">',
       '<p class="page-nav__bucket-label">' +
         escapeHtml(rendererConfig.labels.librarySwitcher) +
         "</p>",
       '<div class="library-switcher__list">',
-      currentCollection.libraries
+      currentCollection.categories
         .map(function (item) {
           return [
             '<a class="library-switcher__link' +
-              (item.id === currentLibrary.id ? " is-active" : "") +
+              (item.id === currentCategory.id ? " is-active" : "") +
               '" href="' +
-              escapeHtml(buildLibraryHref(item.id)) +
+              escapeHtml(buildViewHref(item.id, null, "top")) +
               '">',
             escapeHtml(item.label),
             "</a>",
@@ -161,56 +220,97 @@
     ].join("");
   }
 
-  function buildLibraryHref(libraryId) {
+  function buildViewHref(categoryId, overgroupId, hash) {
     var params = new URLSearchParams(window.location.search);
+    var queryString;
 
-    params.set("thema", libraryId);
+    params.set("kategorie", categoryId);
+    params.delete("thema");
+
+    if (overgroupId) {
+      params.set("gruppe", overgroupId);
+    } else {
+      params.delete("gruppe");
+    }
+
+    queryString = params.toString();
 
     return (
       window.location.pathname +
-      "?" +
-      params.toString() +
-      "#top"
+      (queryString ? "?" + queryString : "") +
+      "#" +
+      (hash || "top")
     );
   }
 
-  function renderPageNav(overgroups) {
+  function renderPageNav(overgroups, view) {
     return [
+      renderStartViewNavItem(view),
       overgroups
         .map(function (overgroup) {
-          var overgroupHeading = getOvergroupHeading(overgroup);
-
-          return [
-            '<section class="page-nav__group" data-group="' +
-              escapeHtml(overgroup.id) +
-              '">',
-            '<a class="page-nav__top" href="#' +
-              escapeHtml(overgroup.id) +
-              '" data-nav-target="' +
-              escapeHtml(overgroup.id) +
-              '">',
-            '<span class="page-nav__label">' + escapeHtml(overgroupHeading) + "</span>",
-            "</a>",
-            '<div class="page-nav__subnav">',
-            overgroup.sections
-              .map(function (section) {
-                return [
-                  '<a class="page-nav__sub-link" href="#' +
-                    escapeHtml(section.id) +
-                    '" data-nav-target="' +
-                    escapeHtml(section.id) +
-                    '">',
-                  escapeHtml(section.title),
-                  "</a>",
-                ].join("");
-              })
-              .join(""),
-            "</div>",
-            "</section>",
-          ].join("");
+          return renderOvergroupNavItem(overgroup, view);
         })
         .join(""),
       renderInfoBucketNavigation(),
+    ].join("");
+  }
+
+  function renderStartViewNavItem(view) {
+    return [
+      '<section class="page-nav__group">',
+      '<a class="page-nav__top' +
+        (view.isOverview ? " is-active" : "") +
+        '" href="' +
+        escapeHtml(buildViewHref(category.id, null, "top")) +
+        '">',
+      '<span class="page-nav__label">' + escapeHtml(rendererConfig.labels.startView) + "</span>",
+      "</a>",
+      "</section>",
+    ].join("");
+  }
+
+  function renderOvergroupNavItem(overgroup, view) {
+    var isActive = Boolean(view.activeOvergroup && view.activeOvergroup.id === overgroup.id);
+
+    return [
+      '<section class="page-nav__group" data-group="' + escapeHtml(overgroup.id) + '">',
+      '<a class="page-nav__top' +
+        (isActive ? " is-active" : "") +
+        '" href="' +
+        escapeHtml(buildViewHref(category.id, overgroup.id, "top")) +
+        '">',
+      '<span class="page-nav__label">' + escapeHtml(getOvergroupHeading(overgroup)) + "</span>",
+      "</a>",
+      isActive ? renderOvergroupSectionNav(overgroup) : "",
+      "</section>",
+    ].join("");
+  }
+
+  function renderOvergroupSectionNav(overgroup) {
+    var visibleSections = overgroup.sections.filter(function (section) {
+      return !section.hideTitle;
+    });
+
+    if (!visibleSections.length) {
+      return "";
+    }
+
+    return [
+      '<div class="page-nav__subnav">',
+      visibleSections
+        .map(function (section) {
+          return [
+            '<a class="page-nav__sub-link" href="#' +
+              escapeHtml(section.id) +
+              '" data-nav-target="' +
+              escapeHtml(section.id) +
+              '">',
+            escapeHtml(section.title),
+            "</a>",
+          ].join("");
+        })
+        .join(""),
+      "</div>",
     ].join("");
   }
 
@@ -239,7 +339,7 @@
       : "";
 
     return [
-      '<section class="page-nav__bucket-panel">',
+      '<section class="page-nav__bucket-panel page-nav__bucket-panel--compact">',
       '<p class="page-nav__bucket-label">' +
         escapeHtml(rendererConfig.labels.pageControls) +
         "</p>",
@@ -256,7 +356,163 @@
     ].join("");
   }
 
-  function renderQuickReferenceCard(card) {
+  function renderMainContent(currentCategory, view) {
+    if (view.isOverview) {
+      return renderCategoryOverview(currentCategory);
+    }
+
+    return renderOvergroupPanel(view.activeOvergroup);
+  }
+
+  function renderCategoryOverview(currentCategory) {
+    return [
+      '<section class="category-overview">',
+      currentCategory.overgroups
+        .map(function (overgroup) {
+          return renderOverviewCard(overgroup);
+        })
+        .join(""),
+      "</section>",
+    ].join("");
+  }
+
+  function renderOverviewCard(overgroup) {
+    var summarySections = buildOverviewSections(overgroup);
+
+    if (summarySections.length === 1 && summarySections[0].hideTitle) {
+      return renderOverviewCardWithDirectItems(overgroup, summarySections[0].items);
+    }
+
+    return [
+      '<article class="overview-card panel"' +
+        renderThemeStyleAttribute(resolveOvergroupTheme(overgroup), "overview") +
+        ">",
+      '<div class="overview-card__header">',
+      '<a class="overview-card__title-link" href="' +
+        escapeHtml(buildViewHref(category.id, overgroup.id, "top")) +
+        '">',
+      renderHeading("h3", overgroup.title),
+      "</a>",
+      "</div>",
+      summarySections.length
+        ? '<div class="overview-card__sections">' +
+          summarySections
+            .map(function (section) {
+              return renderOverviewSection(overgroup, section);
+            })
+            .join("") +
+          "</div>"
+        : '<p class="overview-card__empty">' +
+          escapeHtml(rendererConfig.labels.overviewEmptyState) +
+          "</p>",
+      "</article>",
+    ].join("");
+  }
+
+  function renderOverviewCardWithDirectItems(overgroup, items) {
+    return [
+      '<article class="overview-card panel"' +
+        renderThemeStyleAttribute(resolveOvergroupTheme(overgroup), "overview") +
+        ">",
+      '<div class="overview-card__header">',
+      '<a class="overview-card__title-link" href="' +
+        escapeHtml(buildViewHref(category.id, overgroup.id, "top")) +
+        '">',
+      renderHeading("h3", overgroup.title),
+      "</a>",
+      "</div>",
+      items.length
+        ? '<div class="overview-pill-list">' +
+          items
+            .map(function (item) {
+              return renderOverviewItem(item);
+            })
+            .join("") +
+          "</div>"
+        : '<p class="overview-card__empty">' +
+          escapeHtml(rendererConfig.labels.overviewEmptyState) +
+          "</p>",
+      "</article>",
+    ].join("");
+  }
+
+  function buildOverviewSections(overgroup) {
+    return overgroup.sections.map(function (section) {
+      return {
+        id: section.id,
+        title: section.title,
+        hideTitle: Boolean(section.hideTitle),
+        items: buildOverviewItems(overgroup, section),
+      };
+    });
+  }
+
+  function buildOverviewItems(overgroup, section) {
+    if (
+      section.entries &&
+      section.entries.length === 1 &&
+      shouldRenderInlineEntry(section, section.entries[0])
+    ) {
+      return [];
+    }
+
+    if (section.entries && section.entries.length) {
+      return section.entries.map(function (entry) {
+        return {
+          label: entry.name,
+          href: buildViewHref(category.id, overgroup.id, getEntryAnchorId(entry)),
+        };
+      });
+    }
+
+    if (section.cards && section.cards.length) {
+      return section.cards.map(function (card) {
+        return {
+          label: card.title || card.label,
+          href: buildViewHref(category.id, overgroup.id, section.id),
+        };
+      });
+    }
+
+    return [];
+  }
+
+  function renderOverviewSection(overgroup, section) {
+    if (section.hideTitle) {
+      return "";
+    }
+
+    return [
+      '<section class="overview-card__section">',
+      '<a class="overview-card__section-link" href="' +
+        escapeHtml(buildViewHref(category.id, overgroup.id, section.id)) +
+        '">',
+      escapeHtml(section.title),
+      "</a>",
+      section.items.length
+        ? '<div class="overview-pill-list">' +
+          section.items
+            .map(function (item) {
+              return renderOverviewItem(item);
+            })
+            .join("") +
+          "</div>"
+        : "",
+      "</section>",
+    ].join("");
+  }
+
+  function renderOverviewItem(item) {
+    return [
+      '<a class="overview-pill" href="' + escapeHtml(item.href) + '">',
+      escapeHtml(item.label),
+      "</a>",
+    ].join("");
+  }
+
+  function renderQuickReferenceCard(card, options) {
+    var currentOptions = options || {};
+
     return [
       '<article class="reference-card" data-collapsible="reference" data-collapsed="true">',
       '<div class="reference-card__header">',
@@ -270,9 +526,13 @@
       "</button>",
       "</div>",
       '<div class="reference-card__body">',
-      renderLearningLinkBlock(rendererConfig.labels.quickReferencePrimary, card.items, {
-        tone: "primary",
-      }),
+      renderLearningLinkBlock(
+        currentOptions.primaryLabel || rendererConfig.labels.quickReferencePrimary,
+        card.items,
+        {
+          tone: "primary",
+        }
+      ),
       card.focusItems
         ? renderLearningLinkBlock(
             card.focusLabel || rendererConfig.labels.learningFocusFallback,
@@ -291,6 +551,16 @@
             }
           )
         : "",
+      "</div>",
+      "</article>",
+    ].join("");
+  }
+
+  function renderEmptyReferenceCard(message) {
+    return [
+      '<article class="reference-card reference-card--empty">',
+      '<div class="reference-card__body">',
+      '<p class="reference-empty-state">' + escapeHtml(message) + "</p>",
       "</div>",
       "</article>",
     ].join("");
@@ -315,8 +585,10 @@
 
   function renderOvergroupPanel(overgroup) {
     var overgroupClasses = ["overgroup", "panel"];
-    var overgroupHeading = getOvergroupHeading(overgroup);
     var sectionLinks = overgroup.sections
+      .filter(function (section) {
+        return !section.hideTitle;
+      })
       .map(function (section) {
         return (
           '<a class="section-link" href="#' +
@@ -340,29 +612,11 @@
         '" data-group="' +
         escapeHtml(overgroup.id) +
         '"' +
-        renderThemeStyleAttribute(overgroup.theme || library.theme),
+        renderThemeStyleAttribute(resolveOvergroupTheme(overgroup)),
       '>',
-      '<div class="overgroup__header">',
-      '<div class="overgroup__heading">',
-      '<div class="overgroup__heading-copy">',
-      renderHeading("h2", overgroupHeading),
-      overgroup.description ? "<p>" + escapeHtml(overgroup.description) + "</p>" : "",
-      "</div>",
-      '<div class="overgroup__action-row">',
-      '<button class="section-action-button" type="button" data-overgroup-action="expand" data-overgroup-id="' +
-        escapeHtml(overgroup.id) +
-        '">',
-      escapeHtml(rendererConfig.labels.expandAll),
-      "</button>",
-      '<button class="section-action-button" type="button" data-overgroup-action="collapse" data-overgroup-id="' +
-        escapeHtml(overgroup.id) +
-        '">',
-      escapeHtml(rendererConfig.labels.collapseAll),
-      "</button>",
-      "</div>",
-      "</div>",
-      '</div><div class="overgroup__content">',
-      '<div class="section-links">' + sectionLinks + "</div>",
+      '<div class="overgroup__content">',
+      renderOvergroupHeader(overgroup),
+      sectionLinks ? '<div class="section-links">' + sectionLinks + "</div>" : "",
       '<div class="overgroup__sections">',
       overgroup.sections
         .map(function (section) {
@@ -372,6 +626,21 @@
       "</div>",
       "</div>",
       "</section>",
+    ].join("");
+  }
+
+  function renderOvergroupHeader(overgroup) {
+    if (!overgroup.title && !overgroup.description) {
+      return "";
+    }
+
+    return [
+      '<header class="overgroup__header">',
+      '<div class="overgroup__heading-copy">',
+      overgroup.title ? renderHeading("h2", overgroup.title) : "",
+      overgroup.description ? "<p>" + escapeHtml(overgroup.description) + "</p>" : "",
+      "</div>",
+      "</header>",
     ].join("");
   }
 
@@ -402,18 +671,28 @@
     if (section.type === "entries") {
       sectionBody =
         '<div class="entry-grid">' +
-        section.entries.map(renderEntryCard).join("") +
+        section.entries
+          .map(function (entry) {
+            return renderSectionEntry(section, entry);
+          })
+          .join("") +
         "</div>";
     } else if (section.type === "quickReference") {
       sectionBody =
         '<div class="reference-grid">' +
         section.cards.map(renderQuickReferenceCard).join("") +
         "</div>";
+    } else if (section.type === "referenceIndex") {
+      sectionBody = renderReferenceIndexSection(section);
     } else if (section.type === "pearls") {
       sectionBody =
         '<div class="pearl-grid">' +
         section.cards.map(renderClinicalPearl).join("") +
         "</div>";
+    }
+
+    if (section.hideTitle) {
+      return renderSectionBodyOnly(overgroup, section, sectionBody);
     }
 
     return [
@@ -428,7 +707,6 @@
       renderCollapseToggleStart(section.title, "section", "content-section__heading"),
       '<span class="content-section__heading-copy">',
       renderHeading("h3", section.title),
-      section.description ? "<p>" + escapeHtml(section.description) + "</p>" : "",
       "</span>",
       renderCollapseChevron(),
       "</button>",
@@ -440,13 +718,130 @@
     ].join("");
   }
 
+  function renderSectionBodyOnly(overgroup, section, body) {
+    return [
+      '<section class="content-section content-section--bare content-section--' +
+        escapeHtml(section.type) +
+        '" id="' +
+        escapeHtml(section.id) +
+        '" data-parent-group="' +
+        escapeHtml(overgroup.id) +
+        '">',
+      body,
+      "</section>",
+    ].join("");
+  }
+
+  function renderReferenceIndexSection(section) {
+    var cards = buildReferenceIndexCards(section);
+
+    if (!cards.length) {
+      return [
+        '<div class="reference-grid">',
+        renderEmptyReferenceCard(section.emptyState || rendererConfig.labels.emptyReferenceIndex),
+        "</div>",
+      ].join("");
+    }
+
+    return [
+      '<div class="reference-grid">',
+      cards
+        .map(function (card) {
+          return renderQuickReferenceCard(card, {
+            primaryLabel: section.itemLabel || rendererConfig.labels.referenceIndexPrimary,
+          });
+        })
+        .join(""),
+      "</div>",
+    ].join("");
+  }
+
+  function buildReferenceIndexCards(section) {
+    var groupedCards = {};
+
+    category.overgroups.forEach(function (overgroup) {
+      if (overgroup.includeInLearningLookup === false) {
+        return;
+      }
+
+      overgroup.sections.forEach(function (currentSection) {
+        if (!currentSection.entries) {
+          return;
+        }
+
+        currentSection.entries.forEach(function (entry) {
+          registerReferenceIndexItems(groupedCards, section.source, entry, entry.name);
+
+          if (!entry.variants) {
+            return;
+          }
+
+          entry.variants.forEach(function (variant) {
+            registerReferenceIndexItems(groupedCards, section.source, variant, variant.name);
+          });
+        });
+      });
+    });
+
+    return Object.keys(groupedCards)
+      .map(function (groupKey) {
+        var group = groupedCards[groupKey];
+
+        group.items.sort(compareTextValues);
+
+        return {
+          title: group.title,
+          items: group.items,
+        };
+      })
+      .sort(function (left, right) {
+        return compareTextValues(left.title, right.title);
+      });
+  }
+
+  function registerReferenceIndexItems(groupedCards, source, item, targetLabel) {
+    var sourceItems = item[source];
+
+    if (!source || !sourceItems || !sourceItems.length) {
+      return;
+    }
+
+    sourceItems.forEach(function (sourceItem) {
+      var normalizedItem = normalizeFact(sourceItem);
+      var groupKey = normalizeLookupKey(normalizedItem.main);
+      var group = groupedCards[groupKey];
+      var targetKey = normalizeLookupKey(targetLabel);
+
+      if (!group) {
+        group = {
+          title: normalizedItem.main,
+          items: [],
+          lookup: {},
+        };
+
+        groupedCards[groupKey] = group;
+      }
+
+      if (group.lookup[targetKey]) {
+        return;
+      }
+
+      group.lookup[targetKey] = true;
+      group.items.push(targetLabel);
+    });
+  }
+
+  function compareTextValues(left, right) {
+    return String(left).localeCompare(String(right), "de", {
+      sensitivity: "base",
+    });
+  }
+
   function setupCollapsibleSections() {
     var collapsibles = Array.prototype.slice.call(
       document.querySelectorAll("[data-collapsible]")
     );
-    var anchorLinks = Array.prototype.slice.call(
-      document.querySelectorAll('a[href^="#"]')
-    );
+    var anchorLinks = Array.prototype.slice.call(document.querySelectorAll('a[href^="#"]'));
 
     collapsibles.forEach(function (container) {
       var toggle = container.querySelector(".collapse-toggle");
@@ -493,6 +888,7 @@
 
     collapseAllSections();
     expandAncestors(target);
+    applySelectedInfoBucketState(target);
   }
 
   function handleAnchorNavigationClick(event, link) {
@@ -605,9 +1001,16 @@
   }
 
   function setupInfoBucketButtons() {
-    var buttons = Array.prototype.slice.call(
-      document.querySelectorAll("[data-info-bucket]")
-    );
+    var buttons = Array.prototype.slice.call(document.querySelectorAll("[data-info-bucket]"));
+    var activeKinds = readPersistedInfoBucketKinds();
+
+    buttons.forEach(function (button) {
+      var bucketKind = button.getAttribute("data-info-bucket");
+      var isActive = activeKinds.indexOf(bucketKind) !== -1;
+
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      button.classList.toggle("is-active", isActive);
+    });
 
     buttons.forEach(function (button) {
       button.addEventListener("click", function () {
@@ -620,43 +1023,12 @@
           collapseAllInfoBlocks();
         }
 
+        persistInfoBucketKinds(getActiveInfoBucketKinds());
         applySelectedInfoBucketState(document);
       });
     });
-  }
 
-  function setupOvergroupActionButtons() {
-    var buttons = Array.prototype.slice.call(
-      document.querySelectorAll("[data-overgroup-action][data-overgroup-id]")
-    );
-
-    buttons.forEach(function (button) {
-      button.addEventListener("click", function () {
-        var overgroupId = button.getAttribute("data-overgroup-id");
-        var action = button.getAttribute("data-overgroup-action");
-        var overgroup = document.getElementById(overgroupId);
-
-        if (!overgroup) {
-          return;
-        }
-
-        setOvergroupCollapsedState(overgroup, action === "collapse");
-
-        if (action === "expand") {
-          applySelectedInfoBucketState(overgroup);
-        }
-      });
-    });
-  }
-
-  function setOvergroupCollapsedState(overgroup, collapsed) {
-    var collapsibles = Array.prototype.slice.call(
-      overgroup.querySelectorAll("[data-collapsible]")
-    );
-
-    collapsibles.forEach(function (collapsible) {
-      setCollapsed(collapsible, collapsed);
-    });
+    applySelectedInfoBucketState(document);
   }
 
   function applySelectedInfoBucketState(root) {
@@ -683,6 +1055,46 @@
       });
   }
 
+  function readPersistedInfoBucketKinds() {
+    var rawValue;
+    var parsedKinds;
+    var allowedKinds = infoBucketNavigationItems.map(function (item) {
+      return item.kind;
+    });
+
+    try {
+      rawValue = window.localStorage.getItem(INFO_BUCKET_STORAGE_KEY);
+    } catch (error) {
+      return [];
+    }
+
+    if (!rawValue) {
+      return [];
+    }
+
+    try {
+      parsedKinds = JSON.parse(rawValue);
+    } catch (error) {
+      return [];
+    }
+
+    if (!Array.isArray(parsedKinds)) {
+      return [];
+    }
+
+    return parsedKinds.filter(function (kind) {
+      return allowedKinds.indexOf(kind) !== -1;
+    });
+  }
+
+  function persistInfoBucketKinds(kinds) {
+    try {
+      window.localStorage.setItem(INFO_BUCKET_STORAGE_KEY, JSON.stringify(kinds));
+    } catch (error) {
+      // Ignore storage failures and keep the UI functional without persistence.
+    }
+  }
+
   function expandAncestors(target) {
     var current = target;
 
@@ -705,6 +1117,21 @@
     }
 
     toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+  }
+
+  function renderSectionEntry(section, entry) {
+    if (shouldRenderInlineEntry(section, entry)) {
+      return renderInlineEntryCard(entry);
+    }
+
+    return renderEntryCard(entry);
+  }
+
+  function shouldRenderInlineEntry(section, entry) {
+    return (
+      Boolean(section.entries && section.entries.length === 1) &&
+      normalizeLookupKey(section.title) === normalizeLookupKey(entry.name)
+    );
   }
 
   function renderEntryCard(entry) {
@@ -733,23 +1160,49 @@
       renderCollapseChevron(),
       "</button>",
       "</div>",
+      renderEntryCardBody(entry),
+      "</article>",
+    ].join("");
+  }
+
+  function renderInlineEntryCard(entry) {
+    return [
+      '<article class="entry-card entry-card--inline" id="' +
+        escapeHtml(getEntryAnchorId(entry)) +
+        '">',
+      entry.overview ? '<p class="entry-card__inline-copy">' + escapeHtml(entry.overview) + "</p>" : "",
+      renderEntryCardBody(entry),
+      "</article>",
+    ].join("");
+  }
+
+  function renderEntryCardBody(entry) {
+    return [
       '<div class="entry-card__body">',
-      entry.variants
-        ? '<div class="variant-stack">' +
-          entry.variants
-            .map(function (variant) {
-              return renderVariantCard(entry, variant);
-            })
-            .join("") +
-          "</div>"
-        : renderInformationBlocks(entry),
+      entry.variants ? renderVariantStack(entry) : renderInformationBlocks(entry),
       entry.variants
         ? renderInformationBlocks(entry, {
             hideSubstances: true,
           })
         : "",
       "</div>",
-      "</article>",
+    ].join("");
+  }
+
+  function renderVariantStack(entry) {
+    var variantCount = entry.variants.length;
+    var columnCount = variantCount > 3 ? Math.ceil(variantCount / 2) : variantCount;
+
+    return [
+      '<div class="variant-stack variant-stack--balanced" style="--variant-columns: ' +
+        escapeHtml(String(columnCount)) +
+        ';">',
+      entry.variants
+        .map(function (variant) {
+          return renderVariantCard(entry, variant);
+        })
+        .join(""),
+      "</div>",
     ].join("");
   }
 
@@ -915,14 +1368,14 @@
 
   function renderLearningLinkItem(item) {
     var normalizedItem = normalizeFact(item);
-    var targets = resolveLearningTargets(normalizedItem.main);
+    var targets = resolveLearningTargets(normalizedItem.target || normalizedItem.main);
 
     return [
       '<li class="learning-link-item">',
       targets.length
         ? targets
             .map(function (target) {
-              return renderEntryLink(target, normalizedItem.main, normalizedItem.detail);
+              return renderEntryLink(target, normalizedItem);
             })
             .join("")
         : '<span class="learning-link-fallback">' +
@@ -937,31 +1390,38 @@
     ].join("");
   }
 
-  function renderEntryLink(target, sourceText, itemDetail) {
+  function renderEntryLink(target, sourceItem) {
     var splitLabel = splitHeading(target.label);
+    var displayLabel = sourceItem.target ? sourceItem.main : splitLabel.main;
     var detailText = "";
+    var href =
+      currentView.activeOvergroup && currentView.activeOvergroup.id === target.groupId
+        ? "#" + target.href
+        : buildViewHref(category.id, target.groupId, target.href);
 
-    if (target.context && target.context !== splitLabel.main) {
+    if (sourceItem.target && sourceItem.detail) {
+      detailText = sourceItem.detail;
+    } else if (target.context && target.context !== splitLabel.main) {
       detailText = target.context;
     } else if (splitLabel.detail) {
       detailText = splitLabel.detail;
-    } else if (itemDetail) {
-      detailText = itemDetail;
+    } else if (sourceItem.detail) {
+      detailText = sourceItem.detail;
     } else if (
       target.sourceLabel &&
-      normalizeLookupKey(sourceText) !== normalizeLookupKey(splitLabel.main) &&
+      normalizeLookupKey(sourceItem.main) !== normalizeLookupKey(splitLabel.main) &&
       normalizeLookupKey(target.sourceLabel) !== normalizeLookupKey(splitLabel.main)
     ) {
       detailText = target.sourceLabel;
     }
 
     return [
-      '<a class="wirkstoff-link" href="#' +
-        escapeHtml(target.href) +
+      '<a class="wirkstoff-link" href="' +
+        escapeHtml(href) +
         '"' +
         renderThemeStyleAttribute(target.theme, "link") +
         '">',
-      '<span class="wirkstoff-link__label">' + escapeHtml(splitLabel.main) + "</span>",
+      '<span class="wirkstoff-link__label">' + escapeHtml(displayLabel) + "</span>",
       '<span class="wirkstoff-link__detail">' +
         (detailText ? escapeHtml(detailText) : "&nbsp;") +
         "</span>",
@@ -1024,11 +1484,7 @@
 
   function renderFactMain(text) {
     var factText = String(text);
-    var emphasizedPrefixes = [
-      "Ausschließlich",
-      "Keine",
-      "Nicht",
-    ];
+    var emphasizedPrefixes = ["Ausschließlich", "Keine", "Nicht"];
 
     for (var i = 0; i < emphasizedPrefixes.length; i += 1) {
       var prefix = emphasizedPrefixes[i];
@@ -1047,11 +1503,11 @@
   }
 
   function getOvergroupHeading(overgroup) {
-    if (overgroup.preferTitleInNav) {
-      return overgroup.title;
-    }
+    return overgroup.title || overgroup.kicker || "";
+  }
 
-    return overgroup.kicker || overgroup.title;
+  function resolveOvergroupTheme(overgroup) {
+    return overgroup && overgroup.theme ? overgroup.theme : null;
   }
 
   function buildLearningLinkLookup(overgroups) {
@@ -1072,10 +1528,15 @@
             label: entry.name,
             href: getEntryAnchorId(entry),
             groupId: overgroup.id,
-            theme: overgroup.theme || library.theme,
+            theme: resolveOvergroupTheme(overgroup),
           });
 
-          registerEntryAliases(lookup, entry, overgroup.id, overgroup.theme || library.theme);
+          registerEntryLookupKeys(
+            lookup,
+            entry,
+            overgroup.id,
+            resolveOvergroupTheme(overgroup)
+          );
 
           if (!entry.variants) {
             return;
@@ -1087,7 +1548,7 @@
               href: getVariantAnchorId(entry, variant),
               groupId: overgroup.id,
               context: variant.name,
-              theme: overgroup.theme || library.theme,
+              theme: resolveOvergroupTheme(overgroup),
             };
 
             registerLookup(lookup, variant.name, variantTarget);
@@ -1100,7 +1561,7 @@
                   groupId: overgroup.id,
                   context: variant.name,
                   sourceLabel: substance,
-                  theme: overgroup.theme || library.theme,
+                  theme: resolveOvergroupTheme(overgroup),
                 });
               });
             }
@@ -1109,12 +1570,10 @@
       });
     });
 
-    registerConfiguredAliases(lookup);
-
     return lookup;
   }
 
-  function registerEntryAliases(lookup, entry, groupId, theme) {
+  function registerEntryLookupKeys(lookup, entry, groupId, theme) {
     var target = {
       label: entry.name,
       href: getEntryAnchorId(entry),
@@ -1135,29 +1594,6 @@
     }
 
     registerLookup(lookup, stripHeadingDetail(entry.name), target);
-  }
-
-  function registerConfiguredAliases(lookup) {
-    rendererConfig.learningLinkAliases.forEach(function (alias) {
-      registerAliasFromLookup(lookup, alias.sourceText, alias.aliasText, alias.context);
-    });
-  }
-
-  function registerAliasFromLookup(lookup, sourceKey, aliasText, context) {
-    var target = lookup[normalizeLookupKey(sourceKey)];
-
-    if (!target) {
-      return;
-    }
-
-    registerLookup(lookup, aliasText, {
-      label: target.label,
-      href: target.href,
-      groupId: target.groupId,
-      context: context || target.context,
-      sourceLabel: aliasText,
-      theme: target.theme,
-    });
   }
 
   function registerLookup(lookup, text, target) {
@@ -1295,25 +1731,13 @@
     };
   }
 
-  function setupActiveNavigation(overgroups) {
-    var topLinks = Array.prototype.slice.call(
-      document.querySelectorAll(".page-nav__top")
-    );
-    var subLinks = Array.prototype.slice.call(
-      document.querySelectorAll(".page-nav__sub-link")
-    );
+  function setupActiveNavigation() {
+    var subLinks = Array.prototype.slice.call(document.querySelectorAll(".page-nav__sub-link"));
     var sections = Array.prototype.slice.call(
       document.querySelectorAll(".content-section[data-nav-anchor]")
     );
-    var sectionToGroup = {};
 
-    overgroups.forEach(function (overgroup) {
-      overgroup.sections.forEach(function (section) {
-        sectionToGroup[section.id] = overgroup.id;
-      });
-    });
-
-    if (!sections.length) {
+    if (!subLinks.length || !sections.length) {
       return;
     }
 
@@ -1321,14 +1745,6 @@
 
     function updateActiveNavigationState() {
       var activeSectionId = getActiveSectionId(sections);
-
-      topLinks.forEach(function (link) {
-        var linkTarget = link.getAttribute("data-nav-target");
-        link.classList.toggle(
-          "is-active",
-          linkTarget === sectionToGroup[activeSectionId]
-        );
-      });
 
       subLinks.forEach(function (link) {
         var linkTarget = link.getAttribute("data-nav-target");
