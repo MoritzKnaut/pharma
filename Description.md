@@ -9,7 +9,7 @@ The website is a compact learning reference for four anti-infective topic librar
 - `Antiparasitika`
 - `Virostatika`
 
-Both libraries use the same single-page interaction model: first an overgroup, then the concrete section inside that overgroup.
+All libraries use the same single-page interaction model: first an overgroup, then the concrete section inside that overgroup.
 
 ## Core Features
 
@@ -107,6 +107,8 @@ The learning sections use linked cards so relevant items jump into the matching 
 - Global `Alles ausklappen` and `Alles einklappen` actions in the left navigation expand or restore the full collapsed state for sections, Wirkstoffgruppen, and card-internal content buckets.
 - Each top-level overgroup also provides local `Alles ausklappen` and `Alles einklappen` actions for just that group’s content.
 - Below the navigation links, bucket bubbles such as `Substanzen`, `Wirksamkeit`, or `Wirkmechanismus` can be activated to auto-expand those matching content buckets whenever a section path is opened.
+- The visible bucket labels, auto-expand options, semantic badges, and learning-link aliases come from the central data model so the renderer can stay generic while the displayed structure stays unchanged.
+- The main library and overgroup colors also come from the central data model so topic-specific theming does not require stylesheet branches per topic.
 - The left navigation highlights the active section and its parent overgroup based on the current viewport position, including short pages and near-page-end states.
 - Facts inside cards are shown with strong visual hierarchy:
   - primary learning statement first
@@ -145,5 +147,6 @@ The learning sections use linked cards so relevant items jump into the matching 
 ## Editing Contract
 
 - Future content edits should normally happen in `docs/src/data/antibioticData.js`.
+- Renderer-facing labels, semantic tag definitions, info-bucket definitions, learning-link aliases, and theme colors also live in `docs/src/data/antibioticData.js`.
 - `Antibiotika.md`, `Antimykotika.md`, `Antiparasitika.md`, and `Virostatika.md` remain the original note sources and reference texts.
 - The site is presented as a learning overview and does not claim to replace therapy guidelines.

@@ -18,7 +18,9 @@ Contains the canonical website content in one explicit collection centered on `l
 - one library for `Antimykotika`
 - one library for `Antiparasitika`
 - one library for `Virostatika`
+- one shared renderer configuration for labels, info buckets, semantic tags, and learning-link aliases
 - page metadata per library
+- theme colors per library and per overgroup
 - optional focused support overgroups such as `Anhand Erreger` and `Prägemuster`
 - topic-specific overgroups and second-level sections inside each library
 - optional short summaries on overgroups, sections, and cards
@@ -37,11 +39,11 @@ This file is the intended editing surface for future content changes.
 
 ### `docs/src/app.js`
 
-Reads the central library collection, selects the active topic library from the `?thema=` query parameter, renders all visible sections, wires the active state for the two-step navigation, manages collapsible section blocks, Wirkstoffgruppe cards, and nested info blocks, starts them collapsed by default, expands only the relevant target path when navigation targets are used, and exposes a global reset control for returning to the initial collapsed page state. It also renders the topic switcher, updates document metadata per library, derives semantic tags such as grampositive, gramnegative, anaerobe, atypische, Hefen, or Schimmelpilze from fact text, renders compact pattern cards as bullet lists, renders card buckets such as `Substanzen`, `Wirksamkeit`, `Nebenwirkungen`, `Wirkmechanismus`, `Merke`, and `Sonstiges`, nests `Grenzen` inside `Wirksamkeit`, resolves learning-card items to linked Wirkstoffgruppen, and promotes larger variant families into wider left-to-right layouts. It does not contain domain facts itself; it only transforms data into HTML.
+Reads the central library collection, selects the active topic library from the `?thema=` query parameter, reads the shared renderer configuration, renders all visible sections, wires the active state for the two-step navigation, manages collapsible section blocks, Wirkstoffgruppe cards, and nested info blocks, starts them collapsed by default, expands only the relevant target path when navigation targets are used, and exposes a global reset control for returning to the initial collapsed page state. It also renders the topic switcher, updates document metadata per library, applies library and overgroup theme colors as CSS variables, derives semantic tags from renderer-configured definitions, renders compact pattern cards as bullet lists, renders info buckets from renderer-configured bucket definitions, resolves learning-card items to linked Wirkstoffgruppen through renderer-configured aliases, and promotes larger variant families into wider left-to-right layouts. It does not contain domain facts itself; it only transforms data into HTML.
 
 ### `docs/src/styles.css`
 
-Defines the shared visual system, responsive layout, topic-specific accents, and the semantic color system for quick-glance fact tags. Styling depends on `data-group` attributes and semantic tag classes instead of content internals, so content and presentation stay loosely coupled.
+Defines the shared visual system, responsive layout, topic-specific accents, and the semantic color system for quick-glance fact tags. Styling depends on renderer-provided CSS custom properties, generic classes, and semantic tag classes instead of hardcoded topic IDs, so content and presentation stay loosely coupled.
 
 ### `docs/.nojekyll`
 
@@ -55,13 +57,13 @@ Ensures GitHub Pages serves the `docs/` folder as a plain static site without Je
 - `docs/src/styles.css` is the only place that decides layout, color, spacing, and responsive behavior.
 - `docs/` is the only folder GitHub Pages should publish.
 
-The renderer must only consume the public shape of the `libraries` and `overgroups` data. Styling must only rely on stable IDs and `data-group` attributes. Primary learning statements and secondary bracket-style details are separated in data so presentation can emphasize them differently without changing content.
+The renderer must only consume the public shape of the `renderer`, `libraries`, and `overgroups` data. Styling must only rely on generic classes and CSS custom properties that the renderer derives from data. Primary learning statements and secondary bracket-style details are separated in data so presentation can emphasize them differently without changing content.
 
 ## Data Flow
 
 1. The browser loads `docs/index.html`.
-2. `docs/src/data/antibioticData.js` defines `window.medicationLibraryCollection`.
-3. `docs/src/app.js` selects the active library, builds the topic switcher and two-step navigation, and fills the page placeholders.
+2. `docs/src/data/antibioticData.js` defines `window.medicationLibraryCollection` with both content and renderer configuration.
+3. `docs/src/app.js` selects the active library, reads the renderer configuration, builds the topic switcher and two-step navigation, and fills the page placeholders.
 4. CSS applies layout and group-specific visual treatment.
 
 There is no build step, no backend, and no runtime fetching.
@@ -84,7 +86,7 @@ There is no build step, no backend, and no runtime fetching.
 - Keep content changes concentrated in `docs/src/data/antibioticData.js`.
 - Keep site files inside `docs/` so GitHub Pages can publish one explicit folder.
 - Keep rendering logic simple and data-driven.
-- Keep the shared renderer generic enough to handle both topic libraries without topic-specific HTML forks.
+- Keep the shared renderer generic enough to handle all topic libraries without topic-specific HTML forks or hardcoded domain mappings.
 - Keep navigation aligned with the content model: overgroup first, section second.
 - Keep optional support sections explicit instead of mixing them into pharmacology groups.
 - Keep Markdown source and documentation files at the repository root so they stay outside the published site.

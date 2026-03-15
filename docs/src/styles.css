@@ -35,30 +35,6 @@ body {
   line-height: 1.5;
 }
 
-body[data-library="antibiotika"] {
-  --library-accent: #0f766e;
-  --library-accent-soft: #e9f6f2;
-  --library-accent-strong: #115e59;
-}
-
-body[data-library="antimykotika"] {
-  --library-accent: #b7791f;
-  --library-accent-soft: #fff5db;
-  --library-accent-strong: #9a670f;
-}
-
-body[data-library="antiparasitika"] {
-  --library-accent: #0f4c81;
-  --library-accent-soft: #e6f0fa;
-  --library-accent-strong: #0b3b63;
-}
-
-body[data-library="virostatika"] {
-  --library-accent: #8b1e3f;
-  --library-accent-soft: #fde8ef;
-  --library-accent-strong: #7a1637;
-}
-
 a {
   color: inherit;
 }
@@ -370,6 +346,12 @@ code {
 .hero,
 .overgroup {
   padding: 1.65rem;
+}
+
+.overgroup {
+  --accent: var(--library-accent);
+  --accent-soft: var(--library-accent-soft);
+  --accent-strong: var(--library-accent-strong);
 }
 
 .hero__copy {
@@ -1073,7 +1055,17 @@ code {
   padding: 0.48rem 0.7rem;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: #ffffff;
+  color: var(--link-accent-strong, var(--accent-strong));
+  border-color: color-mix(
+    in srgb,
+    var(--link-accent-soft, var(--accent-soft)) 78%,
+    white 22%
+  );
+  background: color-mix(
+    in srgb,
+    var(--link-accent-soft, var(--accent-soft)) 60%,
+    white 40%
+  );
   text-decoration: none;
   transition: border-color 140ms ease, background-color 140ms ease;
 }
@@ -1089,108 +1081,6 @@ code {
   line-height: 1.2;
   color: rgba(97, 112, 124, 0.9);
   min-height: 1.2em;
-}
-
-.wirkstoff-link[data-tone="aeussere-begrenzungen"] {
-  color: #115e59;
-  border-color: #b8e2da;
-  background: #edf9f6;
-}
-
-.wirkstoff-link[data-tone="nukleinsaeure-und-enzym"] {
-  color: #92400e;
-  border-color: #f1d2b0;
-  background: #fff4e8;
-}
-
-.wirkstoff-link[data-tone="bakterielle-ribosomen"] {
-  color: #1d4ed8;
-  border-color: #c9dcff;
-  background: #eef4ff;
-}
-
-.wirkstoff-link[data-tone="folsaeuremetabolismus"] {
-  color: #9d174d;
-  border-color: #f2bfd5;
-  background: #fff0f6;
-}
-
-.wirkstoff-link[data-tone="azol-antimykotika"] {
-  color: #a16207;
-  border-color: #efd59c;
-  background: #fff8e1;
-}
-
-.wirkstoff-link[data-tone="polyen-antimykotika"] {
-  color: #0f766e;
-  border-color: #b8e2da;
-  background: #edf9f6;
-}
-
-.wirkstoff-link[data-tone="echinocandine"] {
-  color: #1d4ed8;
-  border-color: #c9dcff;
-  background: #eef4ff;
-}
-
-.wirkstoff-link[data-tone="weitere-antimykotika"] {
-  color: #9d174d;
-  border-color: #f2bfd5;
-  background: #fff0f6;
-}
-
-.wirkstoff-link[data-tone="antiparasitika-lernuebersichten"] {
-  color: #334155;
-  border-color: #d6dee6;
-  background: #f3f6f9;
-}
-
-.wirkstoff-link[data-tone="antiprotozoika"] {
-  color: #0f4c81;
-  border-color: #bfd7ef;
-  background: #edf5fc;
-}
-
-.wirkstoff-link[data-tone="anthelminthika"] {
-  color: #9a670f;
-  border-color: #efd59c;
-  background: #fff8e1;
-}
-
-.wirkstoff-link[data-tone="ektoparasitizide"] {
-  color: #7c2d12;
-  border-color: #f0c9ba;
-  background: #fff1eb;
-}
-
-.wirkstoff-link[data-tone="virostatika-lernuebersichten"] {
-  color: #334155;
-  border-color: #d6dee6;
-  background: #f3f6f9;
-}
-
-.wirkstoff-link[data-tone="herpesviridae"] {
-  color: #7a1637;
-  border-color: #f0bfd0;
-  background: #fff0f5;
-}
-
-.wirkstoff-link[data-tone="influenzaviren"] {
-  color: #0f4c81;
-  border-color: #bfd7ef;
-  background: #edf5fc;
-}
-
-.wirkstoff-link[data-tone="hiv-therapie"] {
-  color: #7c3aed;
-  border-color: #d9c7fb;
-  background: #f5efff;
-}
-
-.wirkstoff-link[data-tone="hepatitis-b-und-c"] {
-  color: #9a670f;
-  border-color: #efd59c;
-  background: #fff8e1;
 }
 
 .wirkstoff-link:hover,
@@ -1268,120 +1158,6 @@ code {
   font-weight: 650;
   line-height: 1.35;
   color: var(--ink);
-}
-
-[data-group="lernuebersichten"] {
-  --accent: #475569;
-  --accent-soft: #eef2f7;
-  --accent-strong: #334155;
-}
-
-[data-group="aeussere-begrenzungen"] {
-  --accent: #0f766e;
-  --accent-soft: #e9f6f2;
-  --accent-strong: #115e59;
-}
-
-[data-group="nukleinsaeure-und-enzym"] {
-  --accent: #b45309;
-  --accent-soft: #fff3e4;
-  --accent-strong: #92400e;
-}
-
-[data-group="bakterielle-ribosomen"] {
-  --accent: #1d4ed8;
-  --accent-soft: #ebf2ff;
-  --accent-strong: #1d4ed8;
-}
-
-[data-group="folsaeuremetabolismus"] {
-  --accent: #8b1e54;
-  --accent-soft: #fde7f1;
-  --accent-strong: #9d174d;
-}
-
-[data-group="antimykotika-lernuebersichten"] {
-  --accent: #475569;
-  --accent-soft: #eef2f7;
-  --accent-strong: #334155;
-}
-
-[data-group="azol-antimykotika"] {
-  --accent: #b7791f;
-  --accent-soft: #fff5db;
-  --accent-strong: #9a670f;
-}
-
-[data-group="polyen-antimykotika"] {
-  --accent: #0f766e;
-  --accent-soft: #e9f6f2;
-  --accent-strong: #115e59;
-}
-
-[data-group="echinocandine"] {
-  --accent: #1d4ed8;
-  --accent-soft: #ebf2ff;
-  --accent-strong: #1d4ed8;
-}
-
-[data-group="weitere-antimykotika"] {
-  --accent: #8b1e54;
-  --accent-soft: #fde7f1;
-  --accent-strong: #9d174d;
-}
-
-[data-group="antiparasitika-lernuebersichten"] {
-  --accent: #475569;
-  --accent-soft: #eef2f7;
-  --accent-strong: #334155;
-}
-
-[data-group="antiprotozoika"] {
-  --accent: #0f4c81;
-  --accent-soft: #e6f0fa;
-  --accent-strong: #0b3b63;
-}
-
-[data-group="anthelminthika"] {
-  --accent: #b7791f;
-  --accent-soft: #fff5db;
-  --accent-strong: #9a670f;
-}
-
-[data-group="ektoparasitizide"] {
-  --accent: #9a3412;
-  --accent-soft: #ffefe8;
-  --accent-strong: #7c2d12;
-}
-
-[data-group="virostatika-lernuebersichten"] {
-  --accent: #475569;
-  --accent-soft: #eef2f7;
-  --accent-strong: #334155;
-}
-
-[data-group="herpesviridae"] {
-  --accent: #8b1e3f;
-  --accent-soft: #fde8ef;
-  --accent-strong: #7a1637;
-}
-
-[data-group="influenzaviren"] {
-  --accent: #0f4c81;
-  --accent-soft: #e6f0fa;
-  --accent-strong: #0b3b63;
-}
-
-[data-group="hiv-therapie"] {
-  --accent: #7c3aed;
-  --accent-soft: #f5efff;
-  --accent-strong: #6d28d9;
-}
-
-[data-group="hepatitis-b-und-c"] {
-  --accent: #b7791f;
-  --accent-soft: #fff5db;
-  --accent-strong: #9a670f;
 }
 
 [data-nav-anchor] {
@@ -1539,18 +1315,12 @@ code {
   background: #ebe9ff;
 }
 
-[data-group="lernuebersichten"] .overgroup__sections,
-[data-group="antimykotika-lernuebersichten"] .overgroup__sections,
-[data-group="antiparasitika-lernuebersichten"] .overgroup__sections,
-[data-group="virostatika-lernuebersichten"] .overgroup__sections {
+.overgroup--learning .overgroup__sections {
   grid-template-columns: 1fr;
   gap: 2.4rem;
 }
 
-[data-group="lernuebersichten"] .content-section--quickReference,
-[data-group="antimykotika-lernuebersichten"] .content-section--quickReference,
-[data-group="antiparasitika-lernuebersichten"] .content-section--quickReference,
-[data-group="virostatika-lernuebersichten"] .content-section--quickReference {
+.overgroup--learning .content-section--quickReference {
   min-width: 0;
 }
 
@@ -1624,10 +1394,7 @@ code {
     position: static;
   }
 
-  [data-group="lernuebersichten"] .overgroup__sections,
-  [data-group="antimykotika-lernuebersichten"] .overgroup__sections,
-  [data-group="antiparasitika-lernuebersichten"] .overgroup__sections,
-  [data-group="virostatika-lernuebersichten"] .overgroup__sections {
+  .overgroup--learning .overgroup__sections {
     grid-template-columns: 1fr;
   }
 }

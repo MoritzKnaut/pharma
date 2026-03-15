@@ -6,20 +6,14 @@
     return;
   }
 
+  var rendererConfig = resolveRendererConfig(collection, library);
   var librarySwitcher = document.getElementById("library-switcher");
   var sidePanelIntro = document.querySelector(".side-panel__intro");
   var heroCopy = document.getElementById("hero-copy");
   var pageNav = document.getElementById("page-nav");
   var groupLibrary = document.getElementById("group-library");
-  var wirkstoffLookup = buildWirkstoffLookup(library.overgroups);
-  var infoBucketNavigationItems = [
-    { kind: "substances", label: "Substanzen" },
-    { kind: "effectiveness", label: "Wirksamkeit" },
-    { kind: "side-effects", label: "Nebenwirkungen" },
-    { kind: "mechanism", label: "Wirkmechanismus" },
-    { kind: "notes", label: "Merke" },
-    { kind: "other", label: "Sonstiges" },
-  ];
+  var learningLinkLookup = buildLearningLinkLookup(library.overgroups);
+  var infoBucketNavigationItems = rendererConfig.infoBuckets || [];
 
   updateDocumentMetadata(library);
 
@@ -64,6 +58,7 @@
     if (window.antibioticLibrary) {
       return {
         defaultLibraryId: "antibiotika",
+        renderer: window.antibioticLibrary.renderer,
         libraries: [
           Object.assign(
             {
@@ -98,6 +93,36 @@
     );
   }
 
+  function resolveRendererConfig(currentCollection, currentLibrary) {
+    var collectionRenderer = currentCollection.renderer || {};
+    var libraryRenderer = currentLibrary.renderer || {};
+
+    return {
+      labels: Object.assign(
+        {
+          librarySwitcher: "Thema",
+          pageControls: "Seitensteuerung",
+          autoExpand: "Automatisch ausklappen",
+          expandAll: "Alles ausklappen",
+          collapseAll: "Alles einklappen",
+          entryEyebrow: "Eintrag",
+          pearlEyebrow: "Hinweis",
+          quickReferencePrimary: "Inhalte",
+          learningFocusFallback: "Fokus",
+          learningWarningFallback: "Hinweise",
+        },
+        collectionRenderer.labels || {},
+        libraryRenderer.labels || {}
+      ),
+      infoBuckets: libraryRenderer.infoBuckets || collectionRenderer.infoBuckets || [],
+      semanticTags: libraryRenderer.semanticTags || collectionRenderer.semanticTags || [],
+      learningLinkAliases:
+        libraryRenderer.learningLinkAliases ||
+        collectionRenderer.learningLinkAliases ||
+        [],
+    };
+  }
+
   function updateDocumentMetadata(currentLibrary) {
     document.title = currentLibrary.page.title;
 
@@ -108,12 +133,15 @@
     }
 
     document.body.setAttribute("data-library", currentLibrary.id);
+    setThemeVariables(document.body, currentLibrary.theme, "library");
   }
 
   function renderLibrarySwitcher(currentCollection, currentLibrary) {
     return [
       '<section class="library-switcher" aria-label="Thema auswählen">',
-      '<p class="page-nav__bucket-label">Thema</p>',
+      '<p class="page-nav__bucket-label">' +
+        escapeHtml(rendererConfig.labels.librarySwitcher) +
+        "</p>",
       '<div class="library-switcher__list">',
       currentCollection.libraries
         .map(function (item) {
@@ -187,34 +215,44 @@
   }
 
   function renderInfoBucketNavigation() {
+    var autoExpandPanel = infoBucketNavigationItems.length
+      ? [
+          '<section class="page-nav__bucket-panel">',
+          '<p class="page-nav__bucket-label">' +
+            escapeHtml(rendererConfig.labels.autoExpand) +
+            "</p>",
+          '<div class="page-nav__bucket-list">',
+          infoBucketNavigationItems
+            .map(function (item) {
+              return [
+                '<button class="page-nav__bucket" type="button" data-info-bucket="' +
+                  escapeHtml(item.kind) +
+                  '" aria-pressed="false">',
+                escapeHtml(item.label),
+                "</button>",
+              ].join("");
+            })
+            .join(""),
+          "</div>",
+          "</section>",
+        ].join("")
+      : "";
+
     return [
       '<section class="page-nav__bucket-panel">',
-      '<p class="page-nav__bucket-label">Seitensteuerung</p>',
+      '<p class="page-nav__bucket-label">' +
+        escapeHtml(rendererConfig.labels.pageControls) +
+        "</p>",
       '<div class="page-nav__global-actions">',
       '<button class="header-action-button" id="expand-all-button" type="button">',
-      "Alles ausklappen",
+      escapeHtml(rendererConfig.labels.expandAll),
       "</button>",
       '<button class="header-action-button" id="reset-collapse-button" type="button">',
-      "Alles einklappen",
+      escapeHtml(rendererConfig.labels.collapseAll),
       "</button>",
       "</div>",
       "</section>",
-      '<section class="page-nav__bucket-panel">',
-      '<p class="page-nav__bucket-label">Automatisch ausklappen</p>',
-      '<div class="page-nav__bucket-list">',
-      infoBucketNavigationItems
-        .map(function (item) {
-          return [
-            '<button class="page-nav__bucket" type="button" data-info-bucket="' +
-              escapeHtml(item.kind) +
-              '" aria-pressed="false">',
-            escapeHtml(item.label),
-            "</button>",
-          ].join("");
-        })
-        .join(""),
-      "</div>",
-      "</section>",
+      autoExpandPanel,
     ].join("");
   }
 
@@ -232,16 +270,26 @@
       "</button>",
       "</div>",
       '<div class="reference-card__body">',
-      renderLearningLinkBlock("Typische Optionen", card.items, { tone: "primary" }),
+      renderLearningLinkBlock(rendererConfig.labels.quickReferencePrimary, card.items, {
+        tone: "primary",
+      }),
       card.focusItems
-        ? renderLearningLinkBlock(card.focusLabel || "Fokus", card.focusItems, {
-            tone: "focus",
-          })
+        ? renderLearningLinkBlock(
+            card.focusLabel || rendererConfig.labels.learningFocusFallback,
+            card.focusItems,
+            {
+              tone: "focus",
+            }
+          )
         : "",
       card.warningItems
-        ? renderLearningLinkBlock(card.warningLabel || "Grenzen", card.warningItems, {
-            tone: "warning",
-          })
+        ? renderLearningLinkBlock(
+            card.warningLabel || rendererConfig.labels.learningWarningFallback,
+            card.warningItems,
+            {
+              tone: "warning",
+            }
+          )
         : "",
       "</div>",
       "</article>",
@@ -255,7 +303,7 @@
       '<article class="pearl-card">',
       renderSemanticTags(pearl.label + " " + pearlText),
       '<div class="pearl-card__header">',
-      '<p class="eyebrow">Merksatz</p>',
+      '<p class="eyebrow">' + escapeHtml(rendererConfig.labels.pearlEyebrow) + "</p>",
       renderHeading("h4", pearl.label),
       "</div>",
       pearl.items
@@ -266,6 +314,7 @@
   }
 
   function renderOvergroupPanel(overgroup) {
+    var overgroupClasses = ["overgroup", "panel"];
     var overgroupHeading = getOvergroupHeading(overgroup);
     var sectionLinks = overgroup.sections
       .map(function (section) {
@@ -279,12 +328,19 @@
       })
       .join("");
 
+    if (overgroup.kind) {
+      overgroupClasses.push("overgroup--" + overgroup.kind);
+    }
+
     return [
-      '<section class="overgroup panel" id="' +
+      '<section class="' +
+        overgroupClasses.map(escapeHtml).join(" ") +
+        '" id="' +
         escapeHtml(overgroup.id) +
         '" data-group="' +
         escapeHtml(overgroup.id) +
-        '"',
+        '"' +
+        renderThemeStyleAttribute(overgroup.theme || library.theme),
       '>',
       '<div class="overgroup__header">',
       '<div class="overgroup__heading">',
@@ -296,12 +352,12 @@
       '<button class="section-action-button" type="button" data-overgroup-action="expand" data-overgroup-id="' +
         escapeHtml(overgroup.id) +
         '">',
-      "Alles ausklappen",
+      escapeHtml(rendererConfig.labels.expandAll),
       "</button>",
       '<button class="section-action-button" type="button" data-overgroup-action="collapse" data-overgroup-id="' +
         escapeHtml(overgroup.id) +
         '">',
-      "Alles einklappen",
+      escapeHtml(rendererConfig.labels.collapseAll),
       "</button>",
       "</div>",
       "</div>",
@@ -668,7 +724,9 @@
       '<div class="entry-card__header">',
       renderCollapseToggleStart(entry.name, "entry", "entry-card__heading"),
       '<span class="entry-card__heading-copy">',
-      '<p class="entry-card__eyebrow">Wirkstoffgruppe</p>',
+      '<p class="entry-card__eyebrow">' +
+        escapeHtml(rendererConfig.labels.entryEyebrow) +
+        "</p>",
       renderHeading("h4", entry.name),
       entry.overview ? "<p>" + escapeHtml(entry.overview) + "</p>" : "",
       "</span>",
@@ -711,54 +769,82 @@
   function renderInformationBlocks(item) {
     var options = arguments.length > 1 && arguments[1] ? arguments[1] : {};
 
-    return [
-      options.hideSubstances ? "" : renderSubstanceBlock(item.substances),
-      renderEffectivenessBlock(item.effectiveAgainst, item.cautions),
-      renderListBlock("Nebenwirkungen", item.sideEffects, "side-effects", "side-effects"),
-      renderListBlock("Wirkmechanismus", item.mechanism, "mechanism", "mechanism"),
-      renderListBlock("Merke", item.notes, "note", "notes"),
-      renderListBlock("Sonstiges", item.otherInfo, "other", "other"),
-    ].join("");
+    return infoBucketNavigationItems
+      .filter(function (bucketDefinition) {
+        return !(options.hideSubstances && bucketDefinition.kind === "substances");
+      })
+      .map(function (bucketDefinition) {
+        return renderConfiguredInfoBlock(item, bucketDefinition);
+      })
+      .join("");
   }
 
-  function renderListBlock(title, items, tone, kind) {
-    if (!items || !items.length) {
+  function renderConfiguredInfoBlock(item, bucketDefinition) {
+    var items = item[bucketDefinition.source];
+    var subsectionMarkup = renderConfiguredInfoSubsections(item, bucketDefinition.subsections);
+    var bodyParts = [];
+
+    if (items && items.length) {
+      bodyParts.push(
+        bucketDefinition.listType === "plain"
+          ? renderPlainInfoList(items)
+          : renderFactInfoList(items)
+      );
+    }
+
+    if (subsectionMarkup) {
+      bodyParts.push(subsectionMarkup);
+    }
+
+    if (!bodyParts.length) {
       return "";
     }
 
     return renderInfoBlock(
-      title,
-      tone,
-      '<ul class="fact-list">' + items.map(renderFactItem).join("") + "</ul>",
-      kind
+      bucketDefinition.title,
+      bucketDefinition.tone,
+      bodyParts.join(""),
+      bucketDefinition.kind
     );
   }
 
-  function renderEffectivenessBlock(items, cautions) {
-    if ((!items || !items.length) && (!cautions || !cautions.length)) {
+  function renderConfiguredInfoSubsections(item, subsectionDefinitions) {
+    if (!subsectionDefinitions || !subsectionDefinitions.length) {
       return "";
     }
 
-    return [
-      renderInfoBlock(
-        "Wirksamkeit",
-        "positive",
-        [
-          items && items.length
-            ? '<ul class="fact-list">' + items.map(renderFactItem).join("") + "</ul>"
-            : "",
-          cautions && cautions.length
-            ? renderInfoSubsection(
-                "Grenzen",
-                cautions,
-                "warning",
-                "Grenzen innerhalb der Wirksamkeit"
-              )
-            : "",
-        ].join(""),
-        "effectiveness"
-      ),
-    ].join("");
+    return subsectionDefinitions
+      .map(function (subsectionDefinition) {
+        var items = item[subsectionDefinition.source];
+
+        if (!items || !items.length) {
+          return "";
+        }
+
+        return renderInfoSubsection(
+          subsectionDefinition.title,
+          items,
+          subsectionDefinition.tone,
+          subsectionDefinition.description
+        );
+      })
+      .join("");
+  }
+
+  function renderFactInfoList(items) {
+    return '<ul class="fact-list">' + items.map(renderFactItem).join("") + "</ul>";
+  }
+
+  function renderPlainInfoList(items) {
+    return (
+      '<ul class="substance-list">' +
+      items
+        .map(function (item) {
+          return '<li class="substance-list__item">' + escapeHtml(item) + "</li>";
+        })
+        .join("") +
+      "</ul>"
+    );
   }
 
   function renderInfoBlock(title, tone, body, kind) {
@@ -803,25 +889,6 @@
     ].join("");
   }
 
-  function renderSubstanceBlock(items) {
-    if (!items || !items.length) {
-      return "";
-    }
-
-    return renderInfoBlock(
-      "Substanzen",
-      "substances",
-      '<ul class="substance-list">' +
-        items
-          .map(function (item) {
-            return '<li class="substance-list__item">' + escapeHtml(item) + "</li>";
-          })
-          .join("") +
-        "</ul>",
-      "substances"
-    );
-  }
-
   function renderLearningLinkBlock(title, items, options) {
     if (!items || !items.length) {
       return "";
@@ -855,7 +922,7 @@
       targets.length
         ? targets
             .map(function (target) {
-              return renderWirkstoffLink(target, normalizedItem.main, normalizedItem.detail);
+              return renderEntryLink(target, normalizedItem.main, normalizedItem.detail);
             })
             .join("")
         : '<span class="learning-link-fallback">' +
@@ -870,7 +937,7 @@
     ].join("");
   }
 
-  function renderWirkstoffLink(target, sourceText, itemDetail) {
+  function renderEntryLink(target, sourceText, itemDetail) {
     var splitLabel = splitHeading(target.label);
     var detailText = "";
 
@@ -891,8 +958,8 @@
     return [
       '<a class="wirkstoff-link" href="#' +
         escapeHtml(target.href) +
-        '" data-tone="' +
-        escapeHtml(target.groupId) +
+        '"' +
+        renderThemeStyleAttribute(target.theme, "link") +
         '">',
       '<span class="wirkstoff-link__label">' + escapeHtml(splitLabel.main) + "</span>",
       '<span class="wirkstoff-link__detail">' +
@@ -980,18 +1047,18 @@
   }
 
   function getOvergroupHeading(overgroup) {
-    if (overgroup.kind === "learning" || overgroup.preferTitleInNav) {
+    if (overgroup.preferTitleInNav) {
       return overgroup.title;
     }
 
     return overgroup.kicker || overgroup.title;
   }
 
-  function buildWirkstoffLookup(overgroups) {
+  function buildLearningLinkLookup(overgroups) {
     var lookup = {};
 
     overgroups.forEach(function (overgroup) {
-      if (overgroup.kind === "learning") {
+      if (overgroup.includeInLearningLookup === false) {
         return;
       }
 
@@ -1005,9 +1072,10 @@
             label: entry.name,
             href: getEntryAnchorId(entry),
             groupId: overgroup.id,
+            theme: overgroup.theme || library.theme,
           });
 
-          registerEntryAliases(lookup, entry, overgroup.id);
+          registerEntryAliases(lookup, entry, overgroup.id, overgroup.theme || library.theme);
 
           if (!entry.variants) {
             return;
@@ -1019,6 +1087,7 @@
               href: getVariantAnchorId(entry, variant),
               groupId: overgroup.id,
               context: variant.name,
+              theme: overgroup.theme || library.theme,
             };
 
             registerLookup(lookup, variant.name, variantTarget);
@@ -1031,6 +1100,7 @@
                   groupId: overgroup.id,
                   context: variant.name,
                   sourceLabel: substance,
+                  theme: overgroup.theme || library.theme,
                 });
               });
             }
@@ -1039,16 +1109,17 @@
       });
     });
 
-    registerManualAliases(lookup);
+    registerConfiguredAliases(lookup);
 
     return lookup;
   }
 
-  function registerEntryAliases(lookup, entry, groupId) {
+  function registerEntryAliases(lookup, entry, groupId, theme) {
     var target = {
       label: entry.name,
       href: getEntryAnchorId(entry),
       groupId: groupId,
+      theme: theme,
     };
 
     if (entry.substances) {
@@ -1058,6 +1129,7 @@
           href: getEntryAnchorId(entry),
           groupId: groupId,
           sourceLabel: substance,
+          theme: theme,
         });
       });
     }
@@ -1065,25 +1137,10 @@
     registerLookup(lookup, stripHeadingDetail(entry.name), target);
   }
 
-  function registerManualAliases(lookup) {
-    registerAliasFromLookup(lookup, "glycylcycline", "tigecyclin");
-    registerAliasFromLookup(lookup, "fluorchinolone", "neuere fluorchinolone", "Gruppe III-IV");
-    registerAliasFromLookup(lookup, "fluorchinolone", "fluorchinolone gruppe iii iv", "Gruppe III-IV");
-    registerAliasFromLookup(lookup, "fluorchinolone", "fluorchinolone gruppe i ii", "Gruppe I-II");
-    registerAliasFromLookup(lookup, "cephalosporine", "cephalosporine 3 4", "3.-4. Generation");
-    registerAliasFromLookup(lookup, "cephalosporine", "cephalosporine 1 4", "1.-4. Generation");
-    registerAliasFromLookup(lookup, "cephalosporine", "cephalosporine 5 generation", "5. Generation");
-    registerAliasFromLookup(lookup, "cotrimoxazol", "sulfonamide cotrimoxazol", "Cotrimoxazol");
-    registerAliasFromLookup(
-      lookup,
-      "aminopenicilline + β-lactamase-inhibitor",
-      "aminopenicilline β lactamase inhibitor"
-    );
-    registerAliasFromLookup(
-      lookup,
-      "acylaminopenicilline + β-lactamase-inhibitor",
-      "acylaminopenicilline β lactamase inhibitor"
-    );
+  function registerConfiguredAliases(lookup) {
+    rendererConfig.learningLinkAliases.forEach(function (alias) {
+      registerAliasFromLookup(lookup, alias.sourceText, alias.aliasText, alias.context);
+    });
   }
 
   function registerAliasFromLookup(lookup, sourceKey, aliasText, context) {
@@ -1099,6 +1156,7 @@
       groupId: target.groupId,
       context: context || target.context,
       sourceLabel: aliasText,
+      theme: target.theme,
     });
   }
 
@@ -1108,7 +1166,7 @@
 
   function resolveLearningTargets(text) {
     var normalized = normalizeLookupKey(text);
-    var directMatch = wirkstoffLookup[normalized];
+    var directMatch = learningLinkLookup[normalized];
 
     if (directMatch) {
       return [directMatch];
@@ -1118,7 +1176,7 @@
       return String(text)
         .split(" / ")
         .map(function (part) {
-          return wirkstoffLookup[normalizeLookupKey(part)];
+          return learningLinkLookup[normalizeLookupKey(part)];
         })
         .filter(Boolean);
     }
@@ -1157,47 +1215,53 @@
     return normalizeLookupKey(text).replace(/[ +]+/g, "-");
   }
 
+  function setThemeVariables(element, theme, prefix) {
+    var themeVariables = buildThemeVariables(theme, prefix);
+
+    Object.keys(themeVariables).forEach(function (variableName) {
+      element.style.setProperty(variableName, themeVariables[variableName]);
+    });
+  }
+
+  function renderThemeStyleAttribute(theme, prefix) {
+    var themeVariables = buildThemeVariables(theme, prefix);
+    var styleTokens = Object.keys(themeVariables).map(function (variableName) {
+      return variableName + ": " + themeVariables[variableName];
+    });
+
+    if (!styleTokens.length) {
+      return "";
+    }
+
+    return ' style="' + escapeHtml(styleTokens.join("; ")) + '"';
+  }
+
+  function buildThemeVariables(theme, prefix) {
+    var variablePrefix = prefix ? prefix + "-" : "";
+    var themeVariables = {};
+
+    if (!theme) {
+      return themeVariables;
+    }
+
+    if (theme.accent) {
+      themeVariables["--" + variablePrefix + "accent"] = theme.accent;
+    }
+
+    if (theme.accentSoft) {
+      themeVariables["--" + variablePrefix + "accent-soft"] = theme.accentSoft;
+    }
+
+    if (theme.accentStrong) {
+      themeVariables["--" + variablePrefix + "accent-strong"] = theme.accentStrong;
+    }
+
+    return themeVariables;
+  }
+
   function extractSemanticTags(text) {
     var normalizedText = String(text).toLowerCase();
-    var definitions = [
-      { label: "Grampositiv", tone: "grampositive", match: /grampositiv/ },
-      { label: "Gramnegativ", tone: "gramnegative", match: /gramnegativ/ },
-      { label: "Anaerobier", tone: "anaerobic", match: /\banaerob/ },
-      { label: "Aerobier", tone: "aerobic", match: /\baerob/ },
-      { label: "Intrazellulär", tone: "intracellular", match: /intrazellul/ },
-      { label: "Atypiker", tone: "atypical", match: /atypik/ },
-      { label: "Pseudomonas", tone: "pseudomonas", match: /pseudomonas/ },
-      { label: "MRSA", tone: "mrsa", match: /mrsa/ },
-      { label: "VRE", tone: "vre", match: /\bvre\b/ },
-      { label: "Enterokokken", tone: "enterococci", match: /enterokokk/ },
-      { label: "Mykobakterien", tone: "mycobacteria", match: /mykobakter/ },
-      {
-        label: "Protozoen",
-        tone: "protozoa",
-        match: /protozo|giardi|lamblia|entamoeba|am[oö]b|trichomon/,
-      },
-      { label: "Hefen", tone: "yeasts", match: /\bhefen?\b|candida/ },
-      { label: "Schimmel", tone: "molds", match: /schimmel|aspergill/ },
-      { label: "Dermatophyten", tone: "dermatophytes", match: /dermatophyt/ },
-      { label: "Kryptokokken", tone: "cryptococci", match: /kryptokokk/ },
-      { label: "Onychomykose", tone: "onychomycosis", match: /onychomykos/ },
-      { label: "Nematoden", tone: "nematodes", match: /nematod|ascari|trichin|enterob|oxyuriasis|ancylostomat|strongyloid/ },
-      { label: "Cestoden", tone: "cestodes", match: /cestod|taenia|echinokokk|diphylloboth/ },
-      { label: "Trematoden", tone: "trematodes", match: /trematod|schistosom/ },
-      { label: "Skabies", tone: "scabies", match: /skabie|scabie/ },
-      { label: "Läuse", tone: "lice", match: /laus|lause|pedicul|filzlaus/ },
-      { label: "Malaria", tone: "malaria", match: /malaria/ },
-      { label: "Leishmaniose", tone: "leishmanio", match: /leishmanio/ },
-      { label: "Herpes", tone: "herpes", match: /herpes simplex|herpesvir|aciclovir|valaciclovir/ },
-      { label: "Varizella zoster", tone: "vzv", match: /varizella|zoster/ },
-      { label: "CMV", tone: "cmv", match: /\bcmv\b|zytomegal/ },
-      { label: "Influenza", tone: "influenza", match: /influenza|oseltamivir|amantadin/ },
-      { label: "Hepatitis B", tone: "hepatitisb", match: /hepatitis b|entecavir|lamivudin|telbivudin|tenofovir|adefovir/ },
-      { label: "Hepatitis C", tone: "hepatitisc", match: /hepatitis c|sofosbuvir|glecaprevir|grazoprevir|voxilaprevir|paritaprevir|ledipasvir|elbasvir|velpatasvir|pibrentasvir|ribavirin/ },
-      { label: "HIV", tone: "hiv", match: /\bhiv\b|aids/ },
-    ];
-
-    return definitions.filter(function (definition) {
+    return rendererConfig.semanticTags.filter(function (definition) {
       return definition.match.test(normalizedText);
     });
   }

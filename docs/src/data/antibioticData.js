@@ -21,10 +21,239 @@
     return item;
   }
 
+  var renderer = {
+    labels: {
+      librarySwitcher: "Thema",
+      pageControls: "Seitensteuerung",
+      autoExpand: "Automatisch ausklappen",
+      expandAll: "Alles ausklappen",
+      collapseAll: "Alles einklappen",
+      entryEyebrow: "Wirkstoffgruppe",
+      pearlEyebrow: "Merksatz",
+      quickReferencePrimary: "Typische Optionen",
+      learningFocusFallback: "Fokus",
+      learningWarningFallback: "Grenzen",
+    },
+    infoBuckets: [
+      {
+        kind: "substances",
+        label: "Substanzen",
+        title: "Substanzen",
+        tone: "substances",
+        source: "substances",
+        listType: "plain",
+      },
+      {
+        kind: "effectiveness",
+        label: "Wirksamkeit",
+        title: "Wirksamkeit",
+        tone: "positive",
+        source: "effectiveAgainst",
+        subsections: [
+          {
+            source: "cautions",
+            title: "Grenzen",
+            tone: "warning",
+            description: "Grenzen innerhalb der Wirksamkeit",
+          },
+        ],
+      },
+      {
+        kind: "side-effects",
+        label: "Nebenwirkungen",
+        title: "Nebenwirkungen",
+        tone: "side-effects",
+        source: "sideEffects",
+      },
+      {
+        kind: "mechanism",
+        label: "Wirkmechanismus",
+        title: "Wirkmechanismus",
+        tone: "mechanism",
+        source: "mechanism",
+      },
+      {
+        kind: "notes",
+        label: "Merke",
+        title: "Merke",
+        tone: "note",
+        source: "notes",
+      },
+      {
+        kind: "other",
+        label: "Sonstiges",
+        title: "Sonstiges",
+        tone: "other",
+        source: "otherInfo",
+      },
+    ],
+    learningLinkAliases: [
+      { sourceText: "glycylcycline", aliasText: "tigecyclin" },
+      {
+        sourceText: "fluorchinolone",
+        aliasText: "neuere fluorchinolone",
+        context: "Gruppe III-IV",
+      },
+      {
+        sourceText: "fluorchinolone",
+        aliasText: "fluorchinolone gruppe iii iv",
+        context: "Gruppe III-IV",
+      },
+      {
+        sourceText: "fluorchinolone",
+        aliasText: "fluorchinolone gruppe i ii",
+        context: "Gruppe I-II",
+      },
+      {
+        sourceText: "cephalosporine",
+        aliasText: "cephalosporine 3 4",
+        context: "3.-4. Generation",
+      },
+      {
+        sourceText: "cephalosporine",
+        aliasText: "cephalosporine 1 4",
+        context: "1.-4. Generation",
+      },
+      {
+        sourceText: "cephalosporine",
+        aliasText: "cephalosporine 5 generation",
+        context: "5. Generation",
+      },
+      {
+        sourceText: "cotrimoxazol",
+        aliasText: "sulfonamide cotrimoxazol",
+        context: "Cotrimoxazol",
+      },
+      {
+        sourceText: "aminopenicilline + β-lactamase-inhibitor",
+        aliasText: "aminopenicilline β lactamase inhibitor",
+      },
+      {
+        sourceText: "acylaminopenicilline + β-lactamase-inhibitor",
+        aliasText: "acylaminopenicilline β lactamase inhibitor",
+      },
+    ],
+    semanticTags: [
+      { label: "Grampositiv", tone: "grampositive", match: /grampositiv/ },
+      { label: "Gramnegativ", tone: "gramnegative", match: /gramnegativ/ },
+      { label: "Anaerobier", tone: "anaerobic", match: /\banaerob/ },
+      { label: "Aerobier", tone: "aerobic", match: /\baerob/ },
+      { label: "Intrazellulär", tone: "intracellular", match: /intrazellul/ },
+      { label: "Atypiker", tone: "atypical", match: /atypik/ },
+      { label: "Pseudomonas", tone: "pseudomonas", match: /pseudomonas/ },
+      { label: "MRSA", tone: "mrsa", match: /mrsa/ },
+      { label: "VRE", tone: "vre", match: /\bvre\b/ },
+      { label: "Enterokokken", tone: "enterococci", match: /enterokokk/ },
+      { label: "Mykobakterien", tone: "mycobacteria", match: /mykobakter/ },
+      {
+        label: "Protozoen",
+        tone: "protozoa",
+        match: /protozo|giardi|lamblia|entamoeba|am[oö]b|trichomon/,
+      },
+      { label: "Hefen", tone: "yeasts", match: /\bhefen?\b|candida/ },
+      { label: "Schimmel", tone: "molds", match: /schimmel|aspergill/ },
+      { label: "Dermatophyten", tone: "dermatophytes", match: /dermatophyt/ },
+      { label: "Kryptokokken", tone: "cryptococci", match: /kryptokokk/ },
+      { label: "Onychomykose", tone: "onychomycosis", match: /onychomykos/ },
+      {
+        label: "Nematoden",
+        tone: "nematodes",
+        match: /nematod|ascari|trichin|enterob|oxyuriasis|ancylostomat|strongyloid/,
+      },
+      {
+        label: "Cestoden",
+        tone: "cestodes",
+        match: /cestod|taenia|echinokokk|diphylloboth/,
+      },
+      { label: "Trematoden", tone: "trematodes", match: /trematod|schistosom/ },
+      { label: "Skabies", tone: "scabies", match: /skabie|scabie/ },
+      { label: "Läuse", tone: "lice", match: /laus|lause|pedicul|filzlaus/ },
+      { label: "Malaria", tone: "malaria", match: /malaria/ },
+      { label: "Leishmaniose", tone: "leishmanio", match: /leishmanio/ },
+      {
+        label: "Herpes",
+        tone: "herpes",
+        match: /herpes simplex|herpesvir|aciclovir|valaciclovir/,
+      },
+      { label: "Varizella zoster", tone: "vzv", match: /varizella|zoster/ },
+      { label: "CMV", tone: "cmv", match: /\bcmv\b|zytomegal/ },
+      {
+        label: "Influenza",
+        tone: "influenza",
+        match: /influenza|oseltamivir|amantadin/,
+      },
+      {
+        label: "Hepatitis B",
+        tone: "hepatitisb",
+        match: /hepatitis b|entecavir|lamivudin|telbivudin|tenofovir|adefovir/,
+      },
+      {
+        label: "Hepatitis C",
+        tone: "hepatitisc",
+        match: /hepatitis c|sofosbuvir|glecaprevir|grazoprevir|voxilaprevir|paritaprevir|ledipasvir|elbasvir|velpatasvir|pibrentasvir|ribavirin/,
+      },
+      { label: "HIV", tone: "hiv", match: /\bhiv\b|aids/ },
+    ],
+  };
+
+  var themes = {
+    neutral: {
+      accent: "#475569",
+      accentSoft: "#eef2f7",
+      accentStrong: "#334155",
+    },
+    teal: {
+      accent: "#0f766e",
+      accentSoft: "#e9f6f2",
+      accentStrong: "#115e59",
+    },
+    amber: {
+      accent: "#b7791f",
+      accentSoft: "#fff5db",
+      accentStrong: "#9a670f",
+    },
+    orange: {
+      accent: "#b45309",
+      accentSoft: "#fff3e4",
+      accentStrong: "#92400e",
+    },
+    blue: {
+      accent: "#1d4ed8",
+      accentSoft: "#ebf2ff",
+      accentStrong: "#1d4ed8",
+    },
+    magenta: {
+      accent: "#8b1e54",
+      accentSoft: "#fde7f1",
+      accentStrong: "#9d174d",
+    },
+    navy: {
+      accent: "#0f4c81",
+      accentSoft: "#e6f0fa",
+      accentStrong: "#0b3b63",
+    },
+    clay: {
+      accent: "#9a3412",
+      accentSoft: "#ffefe8",
+      accentStrong: "#7c2d12",
+    },
+    rose: {
+      accent: "#8b1e3f",
+      accentSoft: "#fde8ef",
+      accentStrong: "#7a1637",
+    },
+    violet: {
+      accent: "#7c3aed",
+      accentSoft: "#f5efff",
+      accentStrong: "#6d28d9",
+    },
+  };
+
   var libraries = [
     {
       id: "antibiotika",
       label: "Antibiotika",
+      theme: themes.teal,
       page: {
         title: "Antibiotika Atlas",
         subtitle: "",
@@ -35,13 +264,16 @@
           "Antibiotika nach Wirkorten, Erregerschwerpunkten und kompakten Merksätzen.",
       },
       overgroups: [
-      {
-        id: "lernuebersichten",
-        kind: "learning",
-        title: "Lernübersichten",
-        kicker: "Schneller Zugriff",
-        description: "",
-        sections: [
+        {
+          id: "lernuebersichten",
+          kind: "learning",
+          includeInLearningLookup: false,
+          preferTitleInNav: true,
+          theme: themes.neutral,
+          title: "Lernübersichten",
+          kicker: "Schneller Zugriff",
+          description: "",
+          sections: [
           {
             id: "quick-reference",
             type: "quickReference",
@@ -207,6 +439,7 @@
       {
         id: "aeussere-begrenzungen",
         kind: "antibiotic",
+        theme: themes.teal,
         title: "Äußere Begrenzungen",
         kicker: "Zellwand und Membran",
         description: "",
@@ -541,6 +774,7 @@
       {
         id: "nukleinsaeure-und-enzym",
         kind: "antibiotic",
+        theme: themes.orange,
         title: "Nukleinsäure und zugehörige Enzyme",
         kicker: "DNA, RNA und Enzymziele",
         description: "",
@@ -660,6 +894,7 @@
       {
         id: "bakterielle-ribosomen",
         kind: "antibiotic",
+        theme: themes.blue,
         title: "Bakterielle Ribosomen",
         kicker: "Proteinsynthesehemmung",
         description: "",
@@ -794,6 +1029,7 @@
       {
         id: "folsaeuremetabolismus",
         kind: "antibiotic",
+        theme: themes.magenta,
         title: "Folsäuremetabolismus",
         kicker: "Stoffwechselblockade",
         preferTitleInNav: true,
@@ -868,6 +1104,7 @@
     {
       id: "antimykotika",
       label: "Antimykotika",
+      theme: themes.amber,
       page: {
         title: "Antimykotika Atlas",
         subtitle: "",
@@ -881,6 +1118,9 @@
         {
           id: "antimykotika-lernuebersichten",
           kind: "learning",
+          includeInLearningLookup: false,
+          preferTitleInNav: true,
+          theme: themes.neutral,
           title: "Lernübersichten",
           kicker: "Schneller Zugriff",
           description: "",
@@ -942,6 +1182,7 @@
         {
           id: "azol-antimykotika",
           kind: "antifungal",
+          theme: themes.amber,
           title: "Azol-Antimykotika",
           kicker: "Ergosterol-Synthese",
           preferTitleInNav: true,
@@ -1034,6 +1275,7 @@
         {
           id: "polyen-antimykotika",
           kind: "antifungal",
+          theme: themes.teal,
           title: "Polyen-Antimykotika",
           kicker: "Ergosterol-Bindung",
           preferTitleInNav: true,
@@ -1086,6 +1328,7 @@
         {
           id: "echinocandine",
           kind: "antifungal",
+          theme: themes.blue,
           title: "Echinocandine",
           kicker: "Zellwand-Synthese",
           preferTitleInNav: true,
@@ -1125,6 +1368,7 @@
         {
           id: "weitere-antimykotika",
           kind: "antifungal",
+          theme: themes.magenta,
           title: "Weitere Antimykotika",
           kicker: "Spezielle Optionen",
           preferTitleInNav: true,
@@ -1181,6 +1425,7 @@
     {
       id: "antiparasitika",
       label: "Antiparasitika",
+      theme: themes.navy,
       page: {
         title: "Antiparasitika Atlas",
         subtitle: "",
@@ -1194,6 +1439,9 @@
         {
           id: "antiparasitika-lernuebersichten",
           kind: "learning",
+          includeInLearningLookup: false,
+          preferTitleInNav: true,
+          theme: themes.neutral,
           title: "Lernübersichten",
           kicker: "Schneller Zugriff",
           description: "",
@@ -1244,6 +1492,7 @@
         {
           id: "antiprotozoika",
           kind: "antiparasitic",
+          theme: themes.navy,
           title: "Antiprotozoika",
           kicker: "Einzeller",
           preferTitleInNav: true,
@@ -1301,6 +1550,7 @@
         {
           id: "anthelminthika",
           kind: "antiparasitic",
+          theme: themes.amber,
           title: "Anthelminthika",
           kicker: "Wurmerkrankungen",
           preferTitleInNav: true,
@@ -1400,6 +1650,7 @@
         {
           id: "ektoparasitizide",
           kind: "antiparasitic",
+          theme: themes.clay,
           title: "Ektoparasitizide",
           kicker: "Milben und Läuse",
           preferTitleInNav: true,
@@ -1455,6 +1706,7 @@
     {
       id: "virostatika",
       label: "Virostatika",
+      theme: themes.rose,
       page: {
         title: "Virostatika Atlas",
         subtitle: "",
@@ -1468,6 +1720,9 @@
         {
           id: "virostatika-lernuebersichten",
           kind: "learning",
+          includeInLearningLookup: false,
+          preferTitleInNav: true,
+          theme: themes.neutral,
           title: "Lernübersichten",
           kicker: "Schneller Zugriff",
           description: "",
@@ -1531,6 +1786,7 @@
         {
           id: "herpesviridae",
           kind: "antiviral",
+          theme: themes.rose,
           title: "Antivirale Pharmaka gegen Herpesviridae",
           kicker: "DNA-Viren",
           preferTitleInNav: true,
@@ -1592,6 +1848,7 @@
         {
           id: "influenzaviren",
           kind: "antiviral",
+          theme: themes.navy,
           title: "Antivirale Pharmaka gegen Influenzaviren",
           kicker: "Influenzatherapie",
           preferTitleInNav: true,
@@ -1637,6 +1894,7 @@
         {
           id: "hiv-therapie",
           kind: "antiviral",
+          theme: themes.violet,
           title: "Antiretrovirale Therapie bei HIV",
           kicker: "ART",
           preferTitleInNav: true,
@@ -1744,6 +2002,7 @@
         {
           id: "hepatitis-b-und-c",
           kind: "antiviral",
+          theme: themes.amber,
           title: "Antivirale Pharmaka gegen Hepatitis B und C",
           kicker: "Hepatitisviren",
           preferTitleInNav: true,
@@ -1843,7 +2102,10 @@
 
   window.medicationLibraryCollection = {
     defaultLibraryId: "antibiotika",
+    renderer: renderer,
     libraries: libraries,
   };
-  window.antibioticLibrary = libraries[0];
+  window.antibioticLibrary = Object.assign({}, libraries[0], {
+    renderer: renderer,
+  });
 })();
