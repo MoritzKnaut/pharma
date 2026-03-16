@@ -15,10 +15,6 @@
       ),
       fact("Teilweise unempfindlich gegen einige β-Lactamasen"),
       fact("Kombinationen mit β-Lactamase-Inhibitoren erweitern das Spektrum"),
-      fact(
-        "Cefiderocol mit Siderophor-Funktion",
-        "besonders stabil und erleichterte Aufnahme in gramnegative Bakterien"
-      ),
     ],
     cautions: [
       fact("Cephalosporine der 1.-4. Generation wirken nicht gegen Enterokokken"),
@@ -106,6 +102,12 @@
       {
         name: "Cefiderocol",
         substances: ["Cefiderocol"],
+        mechanism: [
+          fact(
+            "Cefiderocol mit Siderophor-Funktion",
+            "besonders stabil und erleichterte Aufnahme in gramnegative Bakterien"
+          ),
+        ],
         effectiveAgainst: [
           fact("Gute Wirkung gegen aerobe gramnegative Bakterien", "inkl. MRGN"),
         ],
