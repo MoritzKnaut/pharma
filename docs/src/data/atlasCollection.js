@@ -11,6 +11,7 @@
       categories.antiparasitika,
       categories.virostatika,
       categories.immunsuppressiva,
+      categories.zytostatika,
     ].filter(Boolean),
   };
 })();

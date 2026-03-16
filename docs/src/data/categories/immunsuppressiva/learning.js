@@ -1,6 +1,8 @@
 (function () {
   var shared = window.pharmaAtlasShared || {};
   var themes = shared.themes || {};
+  var fact = shared.fact;
+  var referenceItem = shared.referenceItem;
   var parts = shared.getCategoryParts("immunsuppressiva");
 
   parts.overgroups.learning = {
@@ -8,26 +10,92 @@
     kind: "links",
     includeInLearningLookup: false,
     theme: themes.neutral,
-    title: "Links",
+    title: "Lernübersichten",
     sections: [
       {
         id: "immunsuppressiva-anhand-indikationen",
-        type: "referenceIndex",
-        source: "indications",
+        type: "quickReference",
         title: "Anhand Indikationen",
-        description:
-          "Sobald Wirkstoffgruppen gepflegt sind, erscheint hier automatisch die gedrehte Sicht nach Indikationen.",
-        emptyState:
-          "Noch keine Immunsuppressiva eingetragen. Pflege die Daten direkt in dieser Kategorie-Datei.",
+        description: "Schnelle Orientierung nach Erkrankungen",
+        cards: [
+          {
+            title: "Rheumatoide Arthritis",
+            items: [
+              referenceItem("TNF-Inhibitoren", "TNF-Inhibitoren"),
+              referenceItem("IL1-Inhibitoren", "IL1-Inhibitoren"),
+              referenceItem("IL6-Inhibitoren", "IL6-Inhibitoren"),
+              referenceItem("CD-gezielte Antikörper", "CD-gezielte Antikörper", "Rituximab"),
+              referenceItem("Aminosalicylate", "Aminosalicylate", "Sulfasalazin"),
+              referenceItem("Januskinase-Inhibitoren", "Januskinase-Inhibitoren"),
+              referenceItem("Hydroxychloroquin", "Hydroxychloroquin")
+            ]
+          },
+          {
+            title: "Multiple Sklerose",
+            items: [
+              referenceItem("Integrin-Inhibitoren", "Integrin- und IgE-Inhibitoren", "Natalizumab"),
+              referenceItem("CD52-Inhibitoren", "CD-gezielte Antikörper", "Alemtuzumab"),
+              referenceItem("Dimethylfumarat", "Dimethylfumarat"),
+              referenceItem("Glatirameracetat", "Glatirameracetat")
+            ]
+          },
+          {
+            title: "Chronisch-entzündliche Darmerkrankungen",
+            items: [
+              referenceItem("TNF-Inhibitoren", "TNF-Inhibitoren"),
+              referenceItem("Aminosalicylate", "Aminosalicylate"),
+              referenceItem("IL12/23-Inhibitoren", "Weitere IL-Inhibitoren", "Ustekinumab"),
+              referenceItem("Januskinase-Inhibitoren", "Januskinase-Inhibitoren", "Tofacitinib")
+            ]
+          },
+          {
+            title: "Transplantation",
+            items: [
+              referenceItem("CD3-Inhibitoren", "CD-gezielte Antikörper", "Muromonab"),
+              referenceItem("CD25-Inhibitoren", "CD-gezielte Antikörper", "Basiliximab")
+            ]
+          },
+          {
+            title: "Asthma",
+            items: [
+              referenceItem("IgE-Inhibitoren", "Integrin- und IgE-Inhibitoren", "Omalizumab"),
+              referenceItem("IL5-Inhibitoren", "Weitere IL-Inhibitoren", "Mepolizumab")
+            ]
+          },
+          {
+            title: "Onkologie/Hämatologie",
+            items: [
+              referenceItem("CD20-Inhibitoren", "CD-gezielte Antikörper", "Rituximab"),
+              referenceItem("CD52-Inhibitoren", "CD-gezielte Antikörper", "Alemtuzumab")
+            ]
+          }
+        ]
       },
       {
-        id: "immunsuppressiva-anhang-erkrankung",
-        type: "referenceIndex",
-        source: "diseaseLinks",
-        title: "Anhang Erkrankung",
-        description: "",
-        emptyState: "Noch keine Inhalte vorhanden.",
-      },
-    ],
+        id: "immunsuppressiva-namenskonventionen",
+        type: "quickReference",
+        title: "Namenskonventionen für monoklonale Antikörper",
+        description: "Systematik der -mab-Nomenklatur",
+        cards: [
+          {
+            title: "Aufbau: Präfix + Wirkbereich + Herkunft + -mab",
+            items: [
+              fact("1. Präfix", "variabel (z.B. Ri, In, Ad)"),
+              fact("2. Wirkbereich", "-ci(r)- = Blutkreislauf, -tu- = Tumoren, -li(m)- = Immunsystem"),
+              fact("3. Herkunft", "-u- = human, -xi- = chimär, -zu- = humanisiert"),
+              fact("4. Endung", "-mab = monoclonal antibody")
+            ]
+          },
+          {
+            title: "Beispiele",
+            items: [
+              fact("Rituximab", "Ri-tu-xi-mab: gegen Tumoren wirkend, chimär"),
+              fact("Infliximab", "In-tu-xi-mab: gegen Tumoren wirkend, chimär"),
+              fact("Adalimumab", "Ada-li-mu-mab: immunsystemwirkend, human")
+            ]
+          }
+        ]
+      }
+    ]
   };
 })();

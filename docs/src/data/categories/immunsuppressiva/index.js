@@ -10,16 +10,20 @@
     theme: themes.clay,
     page: {
       title: "Immunsuppressiva",
-      subtitle: "",
+      subtitle: "Biologicals, Immunmodulatoren und Zytokininhibitoren",
       intro: "",
       description:
-        "Struktur für Immunsuppressiva im Pharma-Atlas. Inhalte folgen in den separaten Datenfeldern.",
+        "Lernübersicht zu Immunsuppressiva: Von TNF-Inhibitoren über IL-gezielte Therapien bis zu klassischen Immunmodulatoren.",
       navIntro:
-        "Immunsuppressiva werden künftig nach Indikationen und Wirkstoffgruppen gepflegt.",
+        "Biologicals, Immunmodulatoren und Zytokininhibitoren nach Wirkmechanismen und Indikationen.",
     },
     renderer: {
       semanticTags: parts.semanticTags,
     },
-    overgroups: [parts.overgroups.learning],
+    overgroups: [
+      parts.overgroups.learning,
+      parts.overgroups.biologicals,
+      parts.overgroups.immunmodulatoren,
+    ],
   };
 })();

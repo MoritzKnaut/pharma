@@ -101,11 +101,17 @@
     if (data.substances) {
       item.substances = data.substances;
     }
+    if (data.mechanism) {
+      item.mechanism = data.mechanism;
+    }
     if (data.effectiveAgainst) {
       item.effectiveAgainst = data.effectiveAgainst;
     }
     if (data.cautions) {
       item.cautions = data.cautions;
+    }
+    if (data.indications) {
+      item.indications = data.indications;
     }
     if (data.cave) {
       item.cave = data.cave;
