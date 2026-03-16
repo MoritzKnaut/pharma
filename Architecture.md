@@ -4,13 +4,7 @@
 
 This project is a small static single-page website that presents a growing **Pharma-Atlas**. The page stays renderer-driven, but the medical content is no longer stored in one monolithic file. Instead, every drug category owns its own folder with a small composition file and smaller content parts so the data stays readable, reviewable, and directly editable by humans.
 
-The current atlas contains:
-
-- `Antibiotika`
-- `Antimykotika`
-- `Antiparasitika`
-- `Virostatika`
-- `Immunsuppressiva` as an empty scaffold for the next expansion step
+> **Note:** For data structure specifications and examples, see `DATA_STRUCTURE_GUIDE.md`.
 
 ## Main Building Blocks
 
@@ -45,14 +39,7 @@ Each category folder owns exactly one atlas category. The folder is split into:
 - `learning.js`: top learning/support overgroup
 - `groups/*.js`: one file per pharmacology overgroup
 
-Each group file contains only the sections and entries for that overgroup.
-
-Example:
-
-- `docs/src/data/categories/antibiotika/index.js`
-- `docs/src/data/categories/antibiotika/semanticTags.js`
-- `docs/src/data/categories/antibiotika/learning.js`
-- `docs/src/data/categories/antibiotika/groups/*.js`
+Each group file contains only the sections and entries for that overgroup. See `DATA_STRUCTURE_GUIDE.md` for detailed file templates and patterns.
 
 ### `docs/src/data/atlasCollection.js`
 
@@ -71,6 +58,12 @@ It also supports two kinds of top reference sections:
 
 Entry sections can optionally hide their own visible heading when they only serve as an internal grouping layer. This keeps categories with flatter structures aligned with the same renderer without forcing redundant intermediate boxes.
 
+The sidebar navigation is derived from the rendered hierarchy:
+
+- visible sections stay as their own navigation level
+- hidden technical sections collapse away
+- entry variants that render as subgroup cards can appear as nested navigation targets under their parent Wirkstoffgruppe
+
 Entries can also make the meaning of their `variants` explicit:
 
 - default `variants` render as collapsible subgroup cards
@@ -80,7 +73,7 @@ Learning links are now explicit. When a visible label should point to a differen
 
 ### `docs/src/styles.css`
 
-Contains the shared visual system, responsive layout, and bucket styling. Styling depends on generic classes and theme variables, not on category-specific markup forks.
+Contains the shared visual system, responsive layout, bucket styling, and the desktop shell behavior. On desktop, the page shell is locked to the viewport and both the left navigation panel and the right content panel scroll inside their own areas. Styling depends on generic classes and theme variables, not on category-specific markup forks.
 
 ## Responsibilities And Boundaries
 
@@ -132,6 +125,9 @@ There is no build step, no backend, and no runtime fetching.
 - Keep the section layer optional in the UI:
   - use visible sections when they add real grouping value
   - use hidden sections only as a technical composition layer for direct entry-card rendering
+- Keep subgroup navigation aligned with the rendered cards:
+  - show entry variants in the sidebar when they render as their own subgroup cards
+  - keep substance-style variants out of the sidebar when they only populate the `Substanzen` bucket
 - Keep category navigation query-driven:
   - `?kategorie=` selects the category
   - `?gruppe=` selects one overgroup

@@ -9,7 +9,7 @@
     includeInLearningLookup: false,
     theme: themes.neutral,
     title: "Links",
-    kicker: "Schneller Zugriff",
+    kicker: "",
     description: "",
     sections: [
       {
@@ -36,7 +36,12 @@
           },
           {
             title: "HIV",
-            items: ["NRTI", "NNRTI", "Protease-Inhibitoren", "Integrase-Inhibitoren"],
+            items: [
+              "NRTI",
+              "NNRTI",
+              "Protease-Inhibitoren",
+              "Integrase-Inhibitoren",
+            ],
           },
           {
             title: "Hepatitis B",

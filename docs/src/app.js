@@ -12,6 +12,8 @@
   var categorySwitcher = document.getElementById("library-switcher");
   var sidePanelIntro = document.querySelector(".side-panel__intro");
   var pageNav = document.getElementById("page-nav");
+  var pageNavControls = document.getElementById("page-nav-controls");
+  var contentContainer = document.querySelector(".content");
   var groupLibrary = document.getElementById("group-library");
   var learningLinkLookup = buildLearningLinkLookup(category.overgroups);
   var infoBucketNavigationItems = rendererConfig.infoBuckets || [];
@@ -28,6 +30,10 @@
 
   if (pageNav) {
     pageNav.innerHTML = renderPageNav(category.overgroups, currentView);
+  }
+
+  if (pageNavControls) {
+    pageNavControls.innerHTML = renderInfoBucketNavigation();
   }
 
   if (groupLibrary) {
@@ -254,14 +260,11 @@
   }
 
   function renderPageNav(overgroups, view) {
-    return [
-      overgroups
-        .map(function (overgroup) {
-          return renderOvergroupNavItem(overgroup, view);
-        })
-        .join(""),
-      renderInfoBucketNavigation(),
-    ].join("");
+    return overgroups
+      .map(function (overgroup) {
+        return renderOvergroupNavItem(overgroup, view);
+      })
+      .join("");
   }
 
   function renderOvergroupNavItem(overgroup, view) {
@@ -291,7 +294,7 @@
   }
 
   function renderOvergroupSectionNav(overgroup) {
-    var navSections = buildOverviewSections(overgroup).filter(function (section) {
+    var navSections = buildNavigationSections(overgroup).filter(function (section) {
       return !section.hideTitle || section.items.length;
     });
 
@@ -342,24 +345,52 @@
   function renderOvergroupSectionNavItems(items, options) {
     var currentOptions = options || {};
     var itemClasses = ["page-nav__subitems"];
+    var currentLevel = currentOptions.level || 0;
 
     if (currentOptions.standalone) {
       itemClasses.push("page-nav__subitems--standalone");
+    }
+
+    if (currentLevel > 0) {
+      itemClasses.push("page-nav__subitems--nested");
     }
 
     return [
       '<div class="' + itemClasses.map(escapeHtml).join(" ") + '">',
       items
         .map(function (item) {
-          return (
-            '<a class="page-nav__sub-link page-nav__sub-link--entry" href="' +
-            escapeHtml(item.href) +
-            '">' +
-            escapeHtml(item.label) +
-            "</a>"
-          );
+          return renderOvergroupSectionNavItem(item, {
+            level: currentLevel,
+          });
         })
         .join(""),
+      "</div>",
+    ].join("");
+  }
+
+  function renderOvergroupSectionNavItem(item, options) {
+    var currentOptions = options || {};
+    var currentLevel = currentOptions.level || 0;
+    var linkClasses = ["page-nav__sub-link", "page-nav__sub-link--entry"];
+
+    if (currentLevel > 0) {
+      linkClasses.push("page-nav__sub-link--nested");
+    }
+
+    return [
+      '<div class="page-nav__subitem">',
+      '<a class="' +
+        linkClasses.map(escapeHtml).join(" ") +
+        '" href="' +
+        escapeHtml(item.href) +
+        '">',
+      escapeHtml(item.label),
+      "</a>",
+      item.children && item.children.length
+        ? renderOvergroupSectionNavItems(item.children, {
+            level: currentLevel + 1,
+          })
+        : "",
       "</div>",
     ].join("");
   }
@@ -428,7 +459,7 @@
 
   function renderOverviewCard(overgroup) {
     var overviewCardClasses = getOverviewCardClasses(overgroup);
-    var summarySections = buildOverviewSections(overgroup);
+    var summarySections = buildNavigationSections(overgroup);
 
     if (summarySections.length === 1 && summarySections[0].hideTitle) {
       return renderOverviewCardWithDirectItems(overgroup, summarySections[0].items, {
@@ -488,13 +519,7 @@
       "</a>",
       "</div>",
       items.length
-        ? '<div class="overview-pill-list">' +
-          items
-            .map(function (item) {
-              return renderOverviewItem(item);
-            })
-            .join("") +
-          "</div>"
+        ? renderOverviewItemList(items)
         : '<p class="overview-card__empty">' +
           escapeHtml(rendererConfig.labels.overviewEmptyState) +
           "</p>",
@@ -512,18 +537,18 @@
     return classes;
   }
 
-  function buildOverviewSections(overgroup) {
+  function buildNavigationSections(overgroup) {
     return overgroup.sections.map(function (section) {
       return {
         id: section.id,
         title: section.title,
         hideTitle: Boolean(section.hideTitle),
-        items: buildOverviewItems(overgroup, section),
+        items: buildNavigationItems(overgroup, section),
       };
     });
   }
 
-  function buildOverviewItems(overgroup, section) {
+  function buildNavigationItems(overgroup, section) {
     if (
       section.entries &&
       section.entries.length === 1 &&
@@ -534,10 +559,7 @@
 
     if (section.entries && section.entries.length) {
       return section.entries.map(function (entry) {
-        return {
-          label: entry.name,
-          href: buildViewHref(category.id, overgroup.id, getEntryAnchorId(entry)),
-        };
+        return buildEntryNavigationItem(overgroup, entry);
       });
     }
 
@@ -553,6 +575,29 @@
     return [];
   }
 
+  function buildEntryNavigationItem(overgroup, entry) {
+    return {
+      label: entry.name,
+      href: buildViewHref(category.id, overgroup.id, getEntryAnchorId(entry)),
+      children: shouldShowVariantNavigationItems(entry)
+        ? entry.variants.map(function (variant) {
+            return {
+              label: variant.name,
+              href: buildViewHref(category.id, overgroup.id, getVariantAnchorId(entry, variant)),
+            };
+          })
+        : [],
+    };
+  }
+
+  function shouldShowVariantNavigationItems(entry) {
+    return Boolean(
+      entry.variants &&
+        entry.variants.length &&
+        entry.variantsKind !== "substances"
+    );
+  }
+
   function renderOverviewSection(overgroup, section) {
     if (section.hideTitle) {
       return "";
@@ -565,24 +610,55 @@
         '">',
       escapeHtml(section.title),
       "</a>",
-      section.items.length
-        ? '<div class="overview-pill-list">' +
-          section.items
-            .map(function (item) {
-              return renderOverviewItem(item);
-            })
-            .join("") +
-          "</div>"
-        : "",
+      section.items.length ? renderOverviewItemList(section.items) : "",
       "</section>",
     ].join("");
   }
 
-  function renderOverviewItem(item) {
+  function renderOverviewItemList(items, options) {
+    var currentOptions = options || {};
+    var listClasses = ["overview-pill-list"];
+
+    if (currentOptions.level > 0) {
+      listClasses.push("overview-pill-list--nested");
+    }
+
     return [
-      '<a class="overview-pill" href="' + escapeHtml(item.href) + '">',
+      '<div class="' + listClasses.map(escapeHtml).join(" ") + '">',
+      items
+        .map(function (item) {
+          return renderOverviewItem(item, {
+            level: currentOptions.level || 0,
+          });
+        })
+        .join(""),
+      "</div>",
+    ].join("");
+  }
+
+  function renderOverviewItem(item, options) {
+    var currentOptions = options || {};
+    var pillClasses = ["overview-pill"];
+
+    if (currentOptions.level > 0) {
+      pillClasses.push("overview-pill--nested");
+    }
+
+    return [
+      '<div class="overview-pill-entry">',
+      '<a class="' +
+        pillClasses.map(escapeHtml).join(" ") +
+        '" href="' +
+        escapeHtml(item.href) +
+        '">',
       escapeHtml(item.label),
       "</a>",
+      item.children && item.children.length
+        ? renderOverviewItemList(item.children, {
+            level: (currentOptions.level || 0) + 1,
+          })
+        : "",
+      "</div>",
     ].join("");
   }
 
@@ -2045,6 +2121,12 @@
       });
     }
 
+    if (contentContainer) {
+      contentContainer.addEventListener("scroll", scheduleActiveNavigationUpdate, {
+        passive: true,
+      });
+    }
+
     window.addEventListener("scroll", scheduleActiveNavigationUpdate, { passive: true });
     window.addEventListener("resize", scheduleActiveNavigationUpdate);
     window.addEventListener("hashchange", scheduleActiveNavigationUpdate);
@@ -2052,12 +2134,20 @@
   }
 
   function getActiveSectionId(sections) {
-    var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    var scrollContainer = getActiveNavigationScrollContainer();
+    var viewportHeight =
+      scrollContainer === window
+        ? window.innerHeight || document.documentElement.clientHeight
+        : scrollContainer.clientHeight;
     var viewportAnchor = Math.min(viewportHeight * 0.32, 260);
     var scrollBottom =
-      window.scrollY + viewportHeight >= document.documentElement.scrollHeight - 4;
+      scrollContainer === window
+        ? window.scrollY + viewportHeight >= document.documentElement.scrollHeight - 4
+        : scrollContainer.scrollTop + viewportHeight >= scrollContainer.scrollHeight - 4;
     var activeSectionId = sections[0] ? sections[0].id : null;
     var nearestDistance = Number.POSITIVE_INFINITY;
+    var containerRect =
+      scrollContainer === window ? null : scrollContainer.getBoundingClientRect();
 
     if (scrollBottom && sections.length) {
       return sections[sections.length - 1].id;
@@ -2065,8 +2155,8 @@
 
     sections.forEach(function (section) {
       var rect = section.getBoundingClientRect();
-      var sectionTop = rect.top;
-      var sectionBottom = rect.bottom;
+      var sectionTop = containerRect ? rect.top - containerRect.top : rect.top;
+      var sectionBottom = containerRect ? rect.bottom - containerRect.top : rect.bottom;
       var distanceToAnchor;
 
       if (sectionTop <= viewportAnchor && sectionBottom > viewportAnchor) {
@@ -2092,6 +2182,22 @@
     });
 
     return activeSectionId;
+  }
+
+  function getActiveNavigationScrollContainer() {
+    var contentStyles;
+
+    if (!contentContainer) {
+      return window;
+    }
+
+    contentStyles = window.getComputedStyle(contentContainer);
+
+    if (contentStyles.overflowY === "auto" || contentStyles.overflowY === "scroll") {
+      return contentContainer;
+    }
+
+    return window;
   }
 
   function escapeHtml(value) {

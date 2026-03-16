@@ -10,7 +10,7 @@
     includeInLearningLookup: false,
     theme: themes.neutral,
     title: "Links",
-    kicker: "Schneller Zugriff",
+    kicker: "",
     description: "",
     sections: [
       {

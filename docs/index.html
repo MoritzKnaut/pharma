@@ -14,8 +14,7 @@
         <div class="page-shell">
             <aside class="side-panel">
                 <div class="side-panel__brand">
-                    <p class="eyebrow">Pharma-Atlas</p>
-                    <h1>Navigation</h1>
+                    <h1>Pharma-Atlas</h1>
                     <p class="side-panel__intro"></p>
                 </div>
 
@@ -26,6 +25,8 @@
                     id="page-nav"
                     aria-label="Seitennavigation"
                 ></nav>
+
+                <div id="page-nav-controls"></div>
             </aside>
 
             <main class="content" id="top">
@@ -34,33 +35,94 @@
         </div>
 
         <script src="src/data/shared.js"></script>
+        
+        <!-- Antibiotika -->
         <script src="src/data/categories/antibiotika/semanticTags.js"></script>
         <script src="src/data/categories/antibiotika/learning.js"></script>
-        <script src="src/data/categories/antibiotika/groups/aeussere-begrenzungen.js"></script>
-        <script src="src/data/categories/antibiotika/groups/nukleinsaeure-und-enzym.js"></script>
-        <script src="src/data/categories/antibiotika/groups/bakterielle-ribosomen.js"></script>
-        <script src="src/data/categories/antibiotika/groups/folsaeuremetabolismus.js"></script>
+        <!-- Antibiotika: Aeussere Begrenzungen entries -->
+        <script src="src/data/categories/antibiotika/groups/aeussere-begrenzungen/entries/penicilline.js"></script>
+        <script src="src/data/categories/antibiotika/groups/aeussere-begrenzungen/entries/cephalosporine.js"></script>
+        <script src="src/data/categories/antibiotika/groups/aeussere-begrenzungen/entries/carbapeneme.js"></script>
+        <script src="src/data/categories/antibiotika/groups/aeussere-begrenzungen/entries/glykopeptide.js"></script>
+        <script src="src/data/categories/antibiotika/groups/aeussere-begrenzungen/entries/lipopeptide.js"></script>
+        <script src="src/data/categories/antibiotika/groups/aeussere-begrenzungen/entries/epoxide.js"></script>
+        <script src="src/data/categories/antibiotika/groups/aeussere-begrenzungen/_main.js"></script>
+        <!-- Antibiotika: Nukleinsaeure entries -->
+        <script src="src/data/categories/antibiotika/groups/nukleinsaeure-und-enzym/entries/fluorchinolone.js"></script>
+        <script src="src/data/categories/antibiotika/groups/nukleinsaeure-und-enzym/entries/nitroimidazole.js"></script>
+        <script src="src/data/categories/antibiotika/groups/nukleinsaeure-und-enzym/entries/ansamycine.js"></script>
+        <script src="src/data/categories/antibiotika/groups/nukleinsaeure-und-enzym/_main.js"></script>
+        <!-- Antibiotika: Bakterielle Ribosomen entries -->
+        <script src="src/data/categories/antibiotika/groups/bakterielle-ribosomen/entries/makrolide.js"></script>
+        <script src="src/data/categories/antibiotika/groups/bakterielle-ribosomen/entries/tetracycline.js"></script>
+        <script src="src/data/categories/antibiotika/groups/bakterielle-ribosomen/entries/glycylcycline.js"></script>
+        <script src="src/data/categories/antibiotika/groups/bakterielle-ribosomen/entries/aminoglykoside.js"></script>
+        <script src="src/data/categories/antibiotika/groups/bakterielle-ribosomen/entries/lincosamide.js"></script>
+        <script src="src/data/categories/antibiotika/groups/bakterielle-ribosomen/entries/oxazolidinone.js"></script>
+        <script src="src/data/categories/antibiotika/groups/bakterielle-ribosomen/_main.js"></script>
+        <!-- Antibiotika: Folsaeuremetabolismus entries -->
+        <script src="src/data/categories/antibiotika/groups/folsaeuremetabolismus/entries/sulfonamide.js"></script>
+        <script src="src/data/categories/antibiotika/groups/folsaeuremetabolismus/entries/trimethoprim.js"></script>
+        <script src="src/data/categories/antibiotika/groups/folsaeuremetabolismus/entries/cotrimoxazol.js"></script>
+        <script src="src/data/categories/antibiotika/groups/folsaeuremetabolismus/_main.js"></script>
         <script src="src/data/categories/antibiotika/index.js"></script>
+        
+        <!-- Antimykotika -->
         <script src="src/data/categories/antimykotika/semanticTags.js"></script>
         <script src="src/data/categories/antimykotika/learning.js"></script>
-        <script src="src/data/categories/antimykotika/groups/azol-antimykotika.js"></script>
-        <script src="src/data/categories/antimykotika/groups/polyen-antimykotika.js"></script>
-        <script src="src/data/categories/antimykotika/groups/echinocandine.js"></script>
-        <script src="src/data/categories/antimykotika/groups/weitere-antimykotika.js"></script>
+        <script src="src/data/categories/antimykotika/groups/azol-antimykotika/entries/imidazole.js"></script>
+        <script src="src/data/categories/antimykotika/groups/azol-antimykotika/entries/triazole.js"></script>
+        <script src="src/data/categories/antimykotika/groups/azol-antimykotika/_main.js"></script>
+        <script src="src/data/categories/antimykotika/groups/polyen-antimykotika/entries/polyen-antimykotika.js"></script>
+        <script src="src/data/categories/antimykotika/groups/polyen-antimykotika/_main.js"></script>
+        <script src="src/data/categories/antimykotika/groups/echinocandine/entries/echinocandine.js"></script>
+        <script src="src/data/categories/antimykotika/groups/echinocandine/_main.js"></script>
+        <script src="src/data/categories/antimykotika/groups/weitere-antimykotika/entries/hydroxypyridonderivate.js"></script>
+        <script src="src/data/categories/antimykotika/groups/weitere-antimykotika/entries/allylamine.js"></script>
+        <script src="src/data/categories/antimykotika/groups/weitere-antimykotika/_main.js"></script>
         <script src="src/data/categories/antimykotika/index.js"></script>
+        
+        <!-- Antiparasitika -->
         <script src="src/data/categories/antiparasitika/semanticTags.js"></script>
         <script src="src/data/categories/antiparasitika/learning.js"></script>
-        <script src="src/data/categories/antiparasitika/groups/antiprotozoika.js"></script>
-        <script src="src/data/categories/antiparasitika/groups/anthelminthika.js"></script>
-        <script src="src/data/categories/antiparasitika/groups/ektoparasitizide.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/antiprotozoika/entries/malariatherapeutika.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/antiprotozoika/entries/antimykotika-bei-protozoen.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/antiprotozoika/entries/nitroimidazole-bei-protozoen.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/antiprotozoika/_main.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/anthelminthika/entries/praziquantel.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/anthelminthika/entries/gabaar-aktivatoren.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/anthelminthika/entries/mikrotubuli-inhibitoren.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/anthelminthika/_main.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/ektoparasitizide/entries/natriumkanalaktivatoren.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/ektoparasitizide/entries/reduktoren-der-oberflaechenspannung.js"></script>
+        <script src="src/data/categories/antiparasitika/groups/ektoparasitizide/_main.js"></script>
         <script src="src/data/categories/antiparasitika/index.js"></script>
+        
+        <!-- Virostatika -->
         <script src="src/data/categories/virostatika/semanticTags.js"></script>
         <script src="src/data/categories/virostatika/learning.js"></script>
-        <script src="src/data/categories/virostatika/groups/herpesviridae.js"></script>
-        <script src="src/data/categories/virostatika/groups/influenzaviren.js"></script>
-        <script src="src/data/categories/virostatika/groups/hiv-therapie.js"></script>
-        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c.js"></script>
+        <script src="src/data/categories/virostatika/groups/herpesviridae/entries/dna-polymerase-inhibitoren.js"></script>
+        <script src="src/data/categories/virostatika/groups/herpesviridae/entries/antisense-oligonukleotide.js"></script>
+        <script src="src/data/categories/virostatika/groups/herpesviridae/_main.js"></script>
+        <script src="src/data/categories/virostatika/groups/influenzaviren/entries/ionenkanalblocker.js"></script>
+        <script src="src/data/categories/virostatika/groups/influenzaviren/entries/neuraminidase-hemmer.js"></script>
+        <script src="src/data/categories/virostatika/groups/influenzaviren/_main.js"></script>
+        <script src="src/data/categories/virostatika/groups/hiv-therapie/entries/nrti.js"></script>
+        <script src="src/data/categories/virostatika/groups/hiv-therapie/entries/nnrti.js"></script>
+        <script src="src/data/categories/virostatika/groups/hiv-therapie/entries/protease-inhibitoren.js"></script>
+        <script src="src/data/categories/virostatika/groups/hiv-therapie/entries/integrase-inhibitoren.js"></script>
+        <script src="src/data/categories/virostatika/groups/hiv-therapie/_main.js"></script>
+        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c/entries/nukleotidanaloga.js"></script>
+        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c/entries/nukleosidanaloga.js"></script>
+        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c/entries/interferon-alpha.js"></script>
+        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c/entries/ns3-protease-inhibitoren.js"></script>
+        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c/entries/ns5a-inhibitoren.js"></script>
+        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c/entries/ns5b-inhibitoren.js"></script>
+        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c/entries/ribavirin.js"></script>
+        <script src="src/data/categories/virostatika/groups/hepatitis-b-und-c/_main.js"></script>
         <script src="src/data/categories/virostatika/index.js"></script>
+        
+        <!-- Immunsuppressiva -->
         <script src="src/data/categories/immunsuppressiva/semanticTags.js"></script>
         <script src="src/data/categories/immunsuppressiva/learning.js"></script>
         <script src="src/data/categories/immunsuppressiva/index.js"></script>

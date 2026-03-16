@@ -36,10 +36,85 @@
       window.pharmaAtlasCategoryParts[categoryId] = {
         semanticTags: [],
         overgroups: {},
+        entries: {},
       };
     }
 
     return window.pharmaAtlasCategoryParts[categoryId];
+  }
+
+  // Helper to create a Wirkstoffgruppe entry
+  function entry(name, data) {
+    var item = {
+      name: name,
+    };
+
+    if (data.substances) {
+      item.substances = data.substances;
+    }
+    if (data.mechanism) {
+      item.mechanism = data.mechanism;
+    }
+    if (data.effectiveAgainst) {
+      item.effectiveAgainst = data.effectiveAgainst;
+    }
+    if (data.cautions) {
+      item.cautions = data.cautions;
+    }
+    if (data.indications) {
+      item.indications = data.indications;
+    }
+    if (data.sideEffects) {
+      item.sideEffects = data.sideEffects;
+    }
+    if (data.notes) {
+      item.notes = data.notes;
+    }
+    if (data.otherInfo) {
+      item.otherInfo = data.otherInfo;
+    }
+    if (data.variants) {
+      item.variants = data.variants;
+    }
+    if (data.variantsKind) {
+      item.variantsKind = data.variantsKind;
+    }
+    if (data.layout) {
+      item.layout = data.layout;
+    }
+    if (data.overview) {
+      item.overview = data.overview;
+    }
+
+    return item;
+  }
+
+  // Helper to create a variant entry
+  function variant(name, data) {
+    var item = {
+      name: name,
+    };
+
+    if (data.substances) {
+      item.substances = data.substances;
+    }
+    if (data.effectiveAgainst) {
+      item.effectiveAgainst = data.effectiveAgainst;
+    }
+    if (data.cautions) {
+      item.cautions = data.cautions;
+    }
+    if (data.notes) {
+      item.notes = data.notes;
+    }
+    if (data.otherInfo) {
+      item.otherInfo = data.otherInfo;
+    }
+    if (data.sideEffects) {
+      item.sideEffects = data.sideEffects;
+    }
+
+    return item;
   }
 
   var themes = {
@@ -137,7 +212,7 @@
             source: "cautions",
             title: "Grenzen",
             tone: "warning",
-            description: "Grenzen innerhalb der Wirksamkeit",
+            description: "",
           },
         ],
       },
@@ -176,6 +251,8 @@
     fact: fact,
     referenceItem: referenceItem,
     getCategoryParts: getCategoryParts,
+    entry: entry,
+    variant: variant,
     themes: themes,
     rendererConfig: rendererConfig,
   };

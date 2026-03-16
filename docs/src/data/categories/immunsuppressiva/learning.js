@@ -9,7 +9,7 @@
     includeInLearningLookup: false,
     theme: themes.neutral,
     title: "Links",
-    kicker: "Schneller Zugriff",
+    kicker: "",
     description:
       "Die Struktur für indikationsbasierte Übersichten ist vorbereitet. Fachinhalte folgen später.",
     sections: [
