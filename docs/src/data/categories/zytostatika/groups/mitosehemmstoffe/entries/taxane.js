@@ -26,5 +26,9 @@
       fact("Lungenfibrose"),
       fact("Periphere Neuropathie"),
     ],
+    additional: [
+      fact("Docetaxel", "1. Wahl bei kastrationsresistentem Prostatakarzinom"),
+      fact("Cabazitaxel", "2. Wahl bei kastrationsresistentem Prostatakarzinom nach Docetaxel"),
+    ],
   });
 })();

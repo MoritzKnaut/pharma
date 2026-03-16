@@ -53,7 +53,7 @@
               referenceItem("Irinotecan", "Topoisomerase-I-Hemmer"),
               referenceItem("Oxaliplatin", "Platin-Derivate"),
             ],
-            focusLabel: "Wichtig",
+            focusLabel: "Standard",
             focusItems: [fact("FOLFOX-Schema", "5-FU + Oxaliplatin")],
           },
           {
@@ -67,7 +67,7 @@
               referenceItem("Etoposid", "Topoisomerase-II-Hemmer"),
               referenceItem("Pemetrexed", "Folsäure-Antagonisten"),
             ],
-            focusLabel: "Platin-basiert",
+            focusLabel: "Standard",
             focusItems: [fact("Cisplatin/Karboplatin", "in Kombination")],
           },
           {
@@ -98,15 +98,6 @@
               referenceItem("Oxaliplatin", "Platin-Derivate"),
               referenceItem("Docetaxel", "Taxane"),
             ],
-          },
-          {
-            title: "Prostatakarzinom",
-            items: [
-              referenceItem("Docetaxel", "Taxane"),
-              referenceItem("Cabazitaxel", "Taxane"),
-            ],
-            focusLabel: "Kastrationsresistent",
-            focusItems: [fact("Docetaxel", "1. Wahl")],
           },
           {
             title: "Glioblastom",
@@ -153,7 +144,7 @@
               referenceItem("L-Asparaginase", "Enzyme"),
               referenceItem("Hydroxyurea", "Ribonukleotidreduktase-Hemmer"),
             ],
-            focusLabel: "ALL-spezifisch",
+            focusLabel: "Standard",
             focusItems: [referenceItem("Vincristin", "Vinca-Alkaloide"), referenceItem("L-Asparaginase", "Enzyme"), fact("Steroide", "zusätzlich")],
           },
           {
@@ -174,7 +165,7 @@
               referenceItem("Cisplatin", "Platin-Derivate"),
               referenceItem("Bleomycin", "Zytostatische Antibiotika"),
             ],
-            focusLabel: "Standard-Schema",
+            focusLabel: "Standard",
             focusItems: [fact("CHOP", "Cyclophosphamid, Doxorubicin, Vincristin, Prednison")],
           },
           {
@@ -263,14 +254,6 @@
             ],
           },
         ],
-      },
-      {
-        id: "anhang-erkrankung",
-        type: "referenceIndex",
-        source: "diseaseLinks",
-        title: "Anhang Erkrankung",
-        description: "",
-        emptyState: "Noch keine Inhalte vorhanden.",
       },
     ],
   };

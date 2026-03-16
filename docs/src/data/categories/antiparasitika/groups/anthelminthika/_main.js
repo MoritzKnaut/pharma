@@ -16,7 +16,7 @@
         hideTitle: true,
         description: "",
         entries: [
-          parts.entries.praziquantel,
+          parts.entries.calciumkanalModulatoren,
           parts.entries.gabaarAktivatoren,
           parts.entries.mikrotubuliInhibitoren,
         ],

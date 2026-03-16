@@ -3,31 +3,36 @@
   var themes = shared.themes || {};
   var parts = shared.getCategoryParts("immunsuppressiva");
 
-  var aminoSalicylate = parts.entries.aminoSalicylate;
-  var dimethylfumarat = parts.entries.dimethylfumarat;
-  var glatirameracetat = parts.entries.glatirameracetat;
-  var hydroxychloroquin = parts.entries.hydroxychloroquin;
+  var leukotrienUndProstaglandinHemmer = parts.entries.leukotrienUndProstaglandinHemmer;
+  var diverseNiedermolekulareImmunmodulatoren = parts.entries.diverseNiedermolekulareImmunmodulatoren;
   var jakInhibitoren = parts.entries.jakInhibitoren;
 
   parts.overgroups.immunmodulatoren = {
     id: "immunmodulatoren",
     kind: "section",
-    theme: themes.clay,
+    theme: themes.violet,
     title: "Immunmodulatoren",
     kicker: "Niedermolekulare Wirkstoffe zur Immunmodulation",
     sections: [
       {
-        id: "immunmodulatoren-wirkstoffgruppen",
+        id: "immunmodulatoren-kinase",
         type: "entries",
-        title: "Wirkstoffgruppen",
-        hideTitle: true,
-        description: "",
+        title: "Kinase-Inhibitoren",
+        hideTitle: false,
+        description: "Hemmung intrazellulärer Signalkaskaden",
         entries: [
-          aminoSalicylate,
-          dimethylfumarat,
-          glatirameracetat,
-          hydroxychloroquin,
           jakInhibitoren
+        ].filter(Boolean)
+      },
+      {
+        id: "immunmodulatoren-niedermolekular",
+        type: "entries",
+        title: "Niedermolekulare Immunmodulatoren",
+        hideTitle: false,
+        description: "Diverse Wirkmechanismen der Immunmodulation",
+        entries: [
+          diverseNiedermolekulareImmunmodulatoren,
+          leukotrienUndProstaglandinHemmer
         ].filter(Boolean)
       }
     ]

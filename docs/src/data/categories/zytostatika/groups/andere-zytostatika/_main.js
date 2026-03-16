@@ -6,7 +6,7 @@
   parts.overgroups.andereZytostatika = {
     id: "andere-zytostatika",
     kind: "section",
-    theme: themes.neutral,
+    theme: themes.rose,
     title: "Andere Zytostatika",
     sections: [
       {

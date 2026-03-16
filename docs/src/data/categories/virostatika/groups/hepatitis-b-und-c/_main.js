@@ -37,7 +37,7 @@
           parts.entries.ns3ProteaseInhibitoren,
           parts.entries.ns5aInhibitoren,
           parts.entries.ns5bInhibitoren,
-          parts.entries.ribavirin,
+          parts.entries.rnaPolymeraseInhibitoren,
         ],
       },
     ],

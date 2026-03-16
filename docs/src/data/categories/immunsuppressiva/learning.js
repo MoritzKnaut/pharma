@@ -70,31 +70,6 @@
             ]
           }
         ]
-      },
-      {
-        id: "immunsuppressiva-namenskonventionen",
-        type: "quickReference",
-        title: "Namenskonventionen für monoklonale Antikörper",
-        description: "Systematik der -mab-Nomenklatur",
-        cards: [
-          {
-            title: "Aufbau: Präfix + Wirkbereich + Herkunft + -mab",
-            items: [
-              fact("1. Präfix", "variabel (z.B. Ri, In, Ad)"),
-              fact("2. Wirkbereich", "-ci(r)- = Blutkreislauf, -tu- = Tumoren, -li(m)- = Immunsystem"),
-              fact("3. Herkunft", "-u- = human, -xi- = chimär, -zu- = humanisiert"),
-              fact("4. Endung", "-mab = monoclonal antibody")
-            ]
-          },
-          {
-            title: "Beispiele",
-            items: [
-              fact("Rituximab", "Ri-tu-xi-mab: gegen Tumoren wirkend, chimär"),
-              fact("Infliximab", "In-tu-xi-mab: gegen Tumoren wirkend, chimär"),
-              fact("Adalimumab", "Ada-li-mu-mab: immunsystemwirkend, human")
-            ]
-          }
-        ]
       }
     ]
   };

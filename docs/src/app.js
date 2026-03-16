@@ -700,15 +700,31 @@
             card.focusItems,
             {
               tone: "focus",
+              emphasis: card.focusEmphasis,
             }
           )
+        : "",
+      card.focusSections
+        ? card.focusSections
+            .map(function (section) {
+              return renderLearningLinkBlock(
+                section.label || rendererConfig.labels.learningFocusFallback,
+                section.items,
+                {
+                  tone: "focus",
+                  emphasis: section.emphasis,
+                }
+              );
+            })
+            .join("")
         : "",
       card.warningItems
         ? renderLearningLinkBlock(
             card.warningLabel || rendererConfig.labels.learningWarningFallback,
             card.warningItems,
             {
-              tone: "warning",
+              tone: "focus",
+              emphasis: "negative",
             }
           )
         : "",
@@ -824,12 +840,8 @@
   }
 
   function renderSectionBlock(overgroup, section) {
-    var sectionClasses = ["content-section", "content-section--" + section.type];
+    var sectionClasses = ["content-section", "content-section--" + section.type, "content-section--wide"];
     var sectionBody = "";
-
-    if (section.layout === "wide") {
-      sectionClasses.push("content-section--wide");
-    }
 
     if (section.type === "entries") {
       sectionBody =
@@ -1751,6 +1763,9 @@
       '<section class="learning-link-block' +
         (options && options.tone
           ? " learning-link-block--" + escapeHtml(options.tone)
+          : "") +
+        (options && options.emphasis
+          ? " learning-link-block--" + escapeHtml(options.emphasis)
           : "") +
         (options && options.compact ? " learning-link-block--compact" : "") +
         '">',

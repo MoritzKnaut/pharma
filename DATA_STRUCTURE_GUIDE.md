@@ -4,6 +4,12 @@ This document describes how to structure data when adding new medicament groups 
 
 > **IMPORTANT:** This is the primary reference for data structure. Before adding any data, read this entire guide. The atlas is a learning overview, not a drug database—never include dosing, pharmacokinetics, manufacturer info, or exhaustive side effect lists.
 
+> **GOLD STANDARD:** The **Antibiotika** category (`docs/src/data/categories/antibiotika/`) is the perfect example of correct data structure. Use it as reference for:
+> - Mechanism-first organization
+> - Proper Wirkstoffgruppe hierarchy
+> - Creating meaningful subgroups by chemical/structural type
+> - Consistent section grouping
+
 ## Core Concept
 
 The Pharma Atlas is a **learning overview system**, not a drug database. Data should be structured for quick comprehension during learning, not exhaustive completeness.
@@ -340,7 +346,168 @@ parts.semanticTags = [
 
 ## Best Practices
 
-### DO:
+### Hierarchy Rules
+
+#### Always Include Wirkstoffgruppe Level
+**Every section must contain at least one Wirkstoffgruppe (entry). Never put substances directly in a section without a Wirkstoffgruppe wrapper.**
+
+The "Wirkstoffgruppe" level is the standard entry point for all pharmacological information. **The UI breaks when this level is missing** because navigation expects that intermediate layer. Without it, clicking a section takes you directly to substances, bypassing the expected card structure.
+
+All substance information must flow through: **Section → Wirkstoffgruppe → (Variants/Substances)**.
+
+```
+Section (e.g., "Antimetabolite")
+  └── Wirkstoffgruppe (e.g., "Pyrimidin-Analoga") ← This level MUST exist
+      └── Substances/Variants (e.g., "5-FU", "Capecitabin")
+```
+
+**Forbidden (Missing Wirkstoffgruppe Level):**
+```javascript
+// BAD: Section directly contains substances without Wirkstoffgruppe
+sections: [{
+  title: "Topoisomerase-Hemmer",
+  entries: [
+    { name: "Etoposid", ... },  // Wrong: substance at section level
+    { name: "Irinotecan", ... }
+  ]
+}]
+```
+
+**Correct:**
+```javascript
+// GOOD: Section contains Wirkstoffgruppe which contains substances
+sections: [{
+  title: "Topoisomerase-Hemmer",
+  entries: [
+    {
+      name: "Topoisomerase-II-Hemmer",  // Wirkstoffgruppe level ← MUST exist
+      substances: ["Etoposid"]  // OK: Single substance is fine!
+    },
+    {
+      name: "Topoisomerase-I-Hemmer",   // Another Wirkstoffgruppe
+      substances: ["Irinotecan", "Topotecan"]
+    }
+  ]
+}]
+```
+
+**Key Point:** Having a Wirkstoffgruppe with only one substance is **perfectly fine** if it represents a clinically meaningful mechanism class. The UI issue only occurs when the Wirkstoffgruppe level itself is missing.
+
+---
+
+#### Wirkstoffgruppen Should Be Groups, Not Individual Substances
+
+**Wirkstoffgruppen (entries) should represent pharmacological or chemical GROUPS, not individual drug names.**
+
+The entry name should describe the **mechanism class** or **substance group**, not a specific drug. Individual drugs should be listed as `substances` or `variants` within the group.
+
+**Correct Pattern:**
+```javascript
+// GOOD: Entry name is a mechanism/substance GROUP
+entry("HCA2-Rezeptor-Agonisten", {  // Mechanism group
+  mechanism: [fact("Blockiert Einwanderung neutrophiler Granulozyten")],
+  substances: ["Dimethylfumarat"]
+})
+
+entry("Toll-like-Rezeptor-Inhibitoren", {  // Mechanism group
+  mechanism: [fact("Inhibition von TLR auf dendritischen Zellen")],
+  substances: ["Hydroxychloroquin"]
+})
+
+// OR group by chemical/structural class:
+entry("Fumarate", {  // Chemical group
+  mechanism: [...],
+  substances: ["Dimethylfumarat"]
+})
+
+entry("Chinoline", {  // Chemical group  
+  mechanism: [...],
+  substances: ["Hydroxychloroquin"]
+})
+```
+
+**Incorrect Pattern:**
+```javascript
+// BAD: Entry name is an individual substance
+entry("Dimethylfumarat", {  // Wrong - this is a drug name, not a group
+  mechanism: [...]
+  // No substances array - the entry IS the substance
+})
+
+entry("Hydroxychloroquin", {  // Wrong - this is a drug name, not a group
+  mechanism: [...]
+}
+```
+
+**Rationale:**
+The Wirkstoffgruppe level should be a **categorization layer**, not just a wrapper around individual drugs. When the entry name equals a specific drug name, the hierarchy becomes flat and loses its organizational value.
+
+**Exception for Truly Unique Substances:**
+When a substance is genuinely one-of-a-kind with no related compounds and no meaningful mechanism/chemical classification exists, using the substance name as the entry name is acceptable. This should be rare.
+
+**Examples of valid exceptions:**
+- **Praziquantel** - Sole representative of pyrazinoisoquinoline derivatives for trematodes/cestodes
+- **Glatirameracetat** - Unique random copolymer of amino acids with no chemical class peers
+- **Ribavirin** - Broad-spectrum antiviral with unique guanosine analog structure
+
+In these cases, consider whether the mechanism of action (even if unclear) could serve as the group name instead. If not, the individual substance name is permissible.
+
+---
+
+**A Wirkstoffgruppe containing only one substance is perfectly acceptable** if it represents a clinically or pharmacologically meaningful category.
+
+**When Single-Substance Groups Are Fine:**
+- Mechanism-based classification with only one representative drug (e.g., Topoisomerase-II-Hemmer with only Etoposid)
+- Unique therapeutic class with no related substances
+- Placeholder for future expansion
+
+**Example - OK Single-Substance:**
+```javascript
+// GOOD: Meaningful mechanism class with one drug
+entry("Topoisomerase-II-Hemmer", {
+  mechanism: [fact("Hemmung der Topoisomerase II")],
+  substances: ["Etoposid"]  // Only one, but pharmacologically distinct
+})
+
+// GOOD: Section with multiple entries, some single-substance
+sections: [{
+  title: "Topoisomerase-Hemmer",
+  entries: [
+    { name: "Anthracycline", substances: ["Doxorubicin", "Daunorubicin", ...] },  // Multiple
+    { name: "Topoisomerase-I-Hemmer", substances: ["Irinotecan", "Topotecan"] },   // Multiple
+    { name: "Topoisomerase-II-Hemmer", substances: ["Etoposid"] }                 // Single - OK!
+  ]
+}]
+```
+
+**UI Consideration:**
+The only UI issue occurs when a section contains **only ONE** entry with **only ONE** substance. In this case, the navigation leads directly to a single card, which looks weird. The solution is to either:
+1. Ensure sections have multiple entries (even if some are single-substance)
+2. Combine truly isolated single-substance entries into broader "Sonstige" sections
+
+**Example - Problematic (Fix This):**
+```javascript
+// BAD: Section with only one entry that has only one substance
+sections: [{
+  title: "Integrin-Inhibitoren",  // Section
+  entries: [
+    { name: "Integrin-Inhibitoren", substances: ["Natalizumab"] }  // Only entry + only substance
+  ]
+}]
+
+// GOOD: Combined into broader section
+sections: [{
+  title: "Sonstige Biologicals",  // Broader section
+  entries: [
+    { name: "Integrin-Inhibitoren", substances: ["Natalizumab"] },  // Single - OK
+    { name: "IgE-Inhibitoren", substances: ["Omalizumab"] }          // Another entry
+  ]
+}]
+```
+
+---
+
+### General DOs and DON'Ts
 - Keep facts concise and scannable (main: 3-6 words)
 - Group related substances under common mechanisms
 - Use `variantsKind: "substances"` for individual drugs with shared mechanisms

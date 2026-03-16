@@ -35,7 +35,7 @@
               "Fosfomycin",
               fact("Aminoglykoside", "v.a. in Kombination"),
             ],
-            focusLabel: "Besonders / ausschließlich grampositiv",
+            focusLabel: "Ausschließlich grampositiv",
             focusItems: ["Glykopeptide", "Oxazolidinone", "Lipopeptide"],
           },
           {
@@ -137,14 +137,6 @@
             items: ["Cotrimoxazol"],
           },
         ],
-      },
-      {
-        id: "anhang-erkrankung",
-        type: "referenceIndex",
-        source: "diseaseLinks",
-        title: "Anhang Erkrankung",
-        description: "",
-        emptyState: "Noch keine Inhalte vorhanden.",
       },
     ],
   };

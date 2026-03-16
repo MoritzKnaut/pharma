@@ -8,7 +8,8 @@
   var il6Inhibitoren = parts.entries.il6Inhibitoren;
   var weitereIlInhibitoren = parts.entries.weitereIlInhibitoren;
   var cdGezielteAntikoerper = parts.entries.cdGezielteAntikoerper;
-  var integrinUndIgeInhibitoren = parts.entries.integrinUndIgeInhibitoren;
+  var integrinInhibitoren = parts.entries.integrinInhibitoren;
+  var igeInhibitoren = parts.entries.igeInhibitoren;
 
   parts.overgroups.biologicals = {
     id: "biologicals",
@@ -18,18 +19,37 @@
     kicker: "Monoklonale Antikörper und Fusionsproteine zur Immunmodulation",
     sections: [
       {
-        id: "biologicals-wirkstoffgruppen",
+        id: "biologicals-zytokininhibitoren",
         type: "entries",
-        title: "Wirkstoffgruppen",
-        hideTitle: true,
-        description: "",
+        title: "Zytokininhibitoren",
+        hideTitle: false,
+        description: "Biologicals mit Hemmung proinflammatorischer Zytokine",
         entries: [
           tnfInhibitoren,
           il1Inhibitoren,
           il6Inhibitoren,
-          weitereIlInhibitoren,
-          cdGezielteAntikoerper,
-          integrinUndIgeInhibitoren
+          weitereIlInhibitoren
+        ].filter(Boolean)
+      },
+      {
+        id: "biologicals-zelloberflaechen",
+        type: "entries",
+        title: "Zelloberflächen-gezielte Antikörper",
+        hideTitle: false,
+        description: "Antikörper gegen Zelloberflächenmarker",
+        entries: [
+          cdGezielteAntikoerper
+        ].filter(Boolean)
+      },
+      {
+        id: "biologicals-sonstige",
+        type: "entries",
+        title: "Sonstige Biologicals",
+        hideTitle: false,
+        description: "Weitere monoklonale Antikörper und Fusionsproteine",
+        entries: [
+          integrinInhibitoren,
+          igeInhibitoren
         ].filter(Boolean)
       }
     ]

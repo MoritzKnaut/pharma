@@ -1592,6 +1592,23 @@ code {
 .learning-link-block--focus,
 .learning-link-block--warning {
   margin-top: 1.35rem;
+  padding: 0.6rem 0.7rem 0.85rem;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.learning-link-block--focus.learning-link-block--positive,
+.learning-link-block--warning.learning-link-block--positive {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.learning-link-block--focus.learning-link-block--negative,
+.learning-link-block--warning.learning-link-block--negative {
+  border-color: #fecaca;
+  background: #fef2f2;
 }
 
 .learning-link-list {
@@ -1614,21 +1631,22 @@ code {
   align-items: flex-start;
   min-width: 0;
   width: 100%;
-  padding: 0.48rem 0.7rem;
-  border: 1px dashed color-mix(in srgb, var(--line) 60%, white 40%);
-  border-radius: 12px;
-  color: color-mix(in srgb, var(--muted) 80%, var(--ink) 20%);
-  background: color-mix(in srgb, var(--surface-soft) 50%, white 50%);
-  font-size: var(--text-base);
-  font-weight: var(--font-normal);
+  padding: 0.45rem 0.72rem;
+  border: 1px solid color-mix(in srgb, var(--link-accent, var(--accent)) 18%, var(--line));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--link-accent-soft, var(--accent-soft)) 60%, white 40%);
+  color: color-mix(in srgb, var(--link-accent-strong, var(--accent-strong)) 84%, #334155 16%);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
   line-height: var(--leading-tight);
 }
 
 .learning-link-fallback .learning-link-detail {
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   font-weight: var(--font-normal);
   line-height: var(--leading-tight);
-  color: rgba(97, 112, 124, 0.9);
+  color: rgba(97, 112, 124, 1);
   min-height: 1.2em;
 }
 
@@ -1652,14 +1670,21 @@ code {
   background: color-mix(in srgb, var(--accent-soft) 82%, white 18%);
 }
 
-.learning-link-block--focus .info-block__title {
-  color: #166534;
-  background: #dcfce7;
+.learning-link-block--focus .info-block__title,
+.learning-link-block--warning .info-block__title {
+  color: var(--accent-strong);
+  background: #e2e8f0;
 }
 
-.learning-link-block--warning .info-block__title {
-  color: #b91c1c;
-  background: #ffe7e7;
+.learning-link-block--focus.learning-link-block--positive .info-block__title {
+  color: #14532d;
+  background: #86efac;
+}
+
+.learning-link-block--focus.learning-link-block--negative .info-block__title,
+.learning-link-block--warning.learning-link-block--negative .info-block__title {
+  color: #7f1d1d;
+  background: #fca5a5;
 }
 
 .wirkstoff-link {
@@ -1669,40 +1694,36 @@ code {
   align-items: flex-start;
   min-width: 0;
   width: 100%;
-  padding: 0.48rem 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  color: var(--link-accent-strong, var(--accent-strong));
-  border-color: color-mix(
-    in srgb,
-    var(--link-accent-soft, var(--accent-soft)) 78%,
-    white 22%
-  );
-  background: color-mix(
-    in srgb,
-    var(--link-accent-soft, var(--accent-soft)) 60%,
-    white 40%
-  );
+  padding: 0.45rem 0.72rem;
+  border: 1px solid color-mix(in srgb, var(--link-accent, var(--accent)) 18%, var(--line));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--link-accent-soft, var(--accent-soft)) 60%, white 40%);
+  color: color-mix(in srgb, var(--link-accent-strong, var(--accent-strong)) 84%, #334155 16%);
   text-decoration: none;
-  transition: border-color 140ms ease, background-color 140ms ease;
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
 }
 
 .wirkstoff-link__label {
   font-size: var(--text-base);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-semibold);
   line-height: var(--leading-tight);
 }
 
 .wirkstoff-link__detail {
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--font-normal);
   line-height: var(--leading-tight);
-  color: rgba(97, 112, 124, 0.9);
+  color: rgba(97, 112, 124, 1);
   min-height: 1.2em;
 }
 
 .wirkstoff-link:hover,
 .wirkstoff-link:focus-visible {
-  border-color: currentColor;
+  border-color: color-mix(in srgb, var(--link-accent, var(--accent)) 44%, var(--line));
+  background: color-mix(in srgb, var(--link-accent-soft, var(--accent-soft)) 74%, white 26%);
 }
 
 .fact-list {
