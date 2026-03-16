@@ -63,6 +63,8 @@ body {
   font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -84,6 +86,7 @@ code {
   align-items: stretch;
   gap: 1.5rem;
   width: 100%;
+  min-width: 0;
   height: 100vh;
   max-width: none;
   padding: 1.75rem;
@@ -377,10 +380,17 @@ code {
   color: #1d4ed8;
 }
 
-.page-nav__bucket[data-info-bucket="notes"] {
-  border-color: #eeddb5;
-  background: #fff8ec;
-  color: #9a670f;
+.page-nav__bucket[data-info-bucket="notes"],
+.page-nav__bucket[data-info-bucket="remember"] {
+  border-color: #fde047;
+  background: #fefce8;
+  color: #a16207;
+}
+
+.page-nav__bucket[data-info-bucket="cave"] {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .page-nav__bucket[data-info-bucket="other"] {
@@ -428,8 +438,17 @@ code {
 
 .page-nav__bucket[data-info-bucket="notes"]:hover,
 .page-nav__bucket[data-info-bucket="notes"]:focus-visible,
-.page-nav__bucket[data-info-bucket="notes"].is-active {
-  border-color: #b7791f;
+.page-nav__bucket[data-info-bucket="notes"].is-active,
+.page-nav__bucket[data-info-bucket="remember"]:hover,
+.page-nav__bucket[data-info-bucket="remember"]:focus-visible,
+.page-nav__bucket[data-info-bucket="remember"].is-active {
+  border-color: #eab308;
+}
+
+.page-nav__bucket[data-info-bucket="cave"]:hover,
+.page-nav__bucket[data-info-bucket="cave"]:focus-visible,
+.page-nav__bucket[data-info-bucket="cave"].is-active {
+  border-color: #dc2626;
 }
 
 .page-nav__bucket[data-info-bucket="other"]:hover,
@@ -491,8 +510,10 @@ code {
   align-self: stretch;
   justify-self: stretch;
   width: 100%;
+  min-width: 0;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
   padding-right: 0.45rem;
@@ -532,16 +553,19 @@ code {
 .pearl-grid,
 .entry-grid {
   display: grid;
+  min-width: 0;
   gap: 0.9rem;
   align-items: start;
 }
 
 .reference-grid {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  min-width: 0;
 }
 
 .pearl-grid {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  min-width: 0;
 }
 
 .reference-card,
@@ -551,6 +575,7 @@ code {
 .entry-card,
 .variant-card {
   display: grid;
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -610,6 +635,7 @@ code {
   gap: 3rem;
   justify-self: stretch;
   width: 100%;
+  min-width: 0;
   min-height: min-content;
   padding-bottom: 0.2rem;
   align-content: start;
@@ -619,6 +645,7 @@ code {
 .category-overview {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  min-width: 0;
   gap: 1.15rem;
   justify-self: stretch;
   width: 100%;
@@ -842,6 +869,7 @@ code {
 .overgroup {
   display: grid;
   gap: 1.8rem;
+  min-width: 0;
   align-self: start;
   align-content: start;
 }
@@ -855,6 +883,7 @@ code {
 .overgroup__content {
   display: grid;
   gap: 1.8rem;
+  min-width: 0;
   align-content: start;
 }
 
@@ -902,6 +931,7 @@ code {
 .overgroup__sections {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  min-width: 0;
   gap: 1.9rem;
   align-items: start;
   align-content: start;
@@ -1159,6 +1189,7 @@ code {
   --entry-min-width: 320px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--entry-min-width), 1fr));
+  min-width: 0;
   gap: 1.15rem;
   align-items: start;
 }
@@ -1255,11 +1286,13 @@ code {
 .variant-stack {
   display: grid;
   gap: 1rem;
+  min-width: 0;
   align-items: start;
 }
 
 .variant-stack--balanced {
   grid-template-columns: repeat(var(--variant-columns, 1), minmax(0, 1fr));
+  min-width: 0;
 }
 
 .variant-stack--nested {
@@ -2061,6 +2094,7 @@ code {
   .page-shell {
     grid-template-columns: 1fr;
     height: auto;
+    min-width: 0;
     padding: 1rem;
     overflow: visible;
     gap: 1rem;
@@ -2092,15 +2126,15 @@ code {
   }
 
   .overgroup__sections {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   }
 
   .entry-grid {
-    --entry-min-width: 280px;
+    --entry-min-width: 260px;
   }
 
   .category-overview {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
 }
 
@@ -2126,7 +2160,8 @@ code {
   }
 
   .entry-grid {
-    --entry-min-width: 240px;
+    --entry-min-width: 100%;
+    grid-template-columns: 1fr;
   }
 
   .overgroup__sections {
