@@ -1794,6 +1794,11 @@ code {
   background: #ebe9ff;
 }
 
+.semantic-tag--opportunistic {
+  color: #be123c;
+  background: #ffe4e6;
+}
+
 .semantic-tag--protozoa {
   color: #0369a1;
   background: #e0f2fe;
@@ -1906,6 +1911,26 @@ code {
 .content-section--quickReference .reference-grid {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   align-items: start;
+}
+
+.content-section--quickReference .reference-card h4 {
+  font-size: var(--text-md);
+}
+
+.content-section--quickReference .learning-link-list {
+  gap: 0.42rem;
+}
+
+.content-section--quickReference .wirkstoff-link {
+  padding: 0.38rem 0.58rem;
+}
+
+.content-section--quickReference .wirkstoff-link__label {
+  font-size: var(--text-sm);
+}
+
+.content-section--quickReference .wirkstoff-link__detail {
+  font-size: var(--text-xs);
 }
 
 @media (min-width: 1400px) {

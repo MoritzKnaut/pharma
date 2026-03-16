@@ -14,7 +14,7 @@
       {
         id: "antimykotika-anhand-erreger",
         type: "quickReference",
-        title: "Anhand Erreger",
+        title: "Anhand Erregergruppen",
         layout: "wide",
         description: "",
         cards: [

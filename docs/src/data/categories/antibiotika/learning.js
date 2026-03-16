@@ -15,7 +15,7 @@
       {
         id: "quick-reference",
         type: "quickReference",
-        title: "Anhand Erreger",
+        title: "Anhand Erregergruppen",
         layout: "wide",
         description: "",
         cards: [
@@ -91,16 +91,6 @@
             ],
           },
           {
-            title:
-              "Atypische / intrazelluläre Erreger (Chlamydien, Mykoplasmen, Legionellen)",
-            items: [
-              "Makrolide",
-              "Tetracycline",
-              fact("Fluorchinolone", "Gruppe III-IV"),
-              referenceItem("Tigecyclin", "Glycylcycline"),
-            ],
-          },
-          {
             title: "MRSA",
             items: [
               "Glykopeptide",
@@ -128,13 +118,23 @@
             warningItems: [fact("Cephalosporine", "1.-4. Generation")],
           },
           {
+            title: "Mykobakterien",
+            items: ["Rifampicin"],
+          },
+          {
+            title:
+              "Atypische / intrazelluläre Erreger (Chlamydien, Mykoplasmen, Legionellen)",
+            items: [
+              "Makrolide",
+              "Tetracycline",
+              fact("Fluorchinolone", "Gruppe III-IV"),
+              referenceItem("Tigecyclin", "Glycylcycline"),
+            ],
+          },
+          {
             title:
               "Protozoen / opportunistische Erreger (Pneumocystis jirovecii, Toxoplasma gondii)",
             items: ["Cotrimoxazol"],
-          },
-          {
-            title: "Mykobakterien",
-            items: ["Rifampicin"],
           },
         ],
       },

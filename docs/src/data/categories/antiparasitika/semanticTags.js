@@ -20,7 +20,7 @@
     },
     { label: "Trematoden", tone: "trematodes", match: /trematod|schistosom/ },
     { label: "Skabies", tone: "scabies", match: /skabie|scabie/ },
-    { label: "Läuse", tone: "lice", match: /laus|lause|pedicul|filzlaus/ },
+    { label: "Läuse", tone: "lice", match: /kopf|filz|laus|lause|pedicul/ },
     { label: "Malaria", tone: "malaria", match: /malaria/ },
     { label: "Leishmaniose", tone: "leishmanio", match: /leishmanio/ },
   ];
