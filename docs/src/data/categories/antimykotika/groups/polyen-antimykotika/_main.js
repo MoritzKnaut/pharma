@@ -6,11 +6,9 @@
 
   parts.overgroups.polyenAntimykotika = {
     id: "polyen-antimykotika",
-    kind: "antifungal",
+    kind: "section",
     theme: themes.teal,
     title: "Polyen-Antimykotika",
-    kicker: "Ergosterol-Bindung",
-    description: "",
     sections: [
       {
         id: "polyen-gruppen",

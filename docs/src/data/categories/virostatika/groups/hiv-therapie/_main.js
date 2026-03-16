@@ -5,11 +5,9 @@
 
   parts.overgroups.hivTherapie = {
     id: "hiv-therapie",
-    kind: "antiviral",
+    kind: "section",
     theme: themes.violet,
     title: "Antiretrovirale Therapie bei HIV",
-    kicker: "ART",
-    description: "",
     sections: [
       {
         id: "hiv-wirkstoffgruppen",

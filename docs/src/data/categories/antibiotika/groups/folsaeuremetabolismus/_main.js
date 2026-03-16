@@ -5,11 +5,9 @@
 
   parts.overgroups.folsaeuremetabolismus = {
     id: "folsaeuremetabolismus",
-    kind: "antibiotic",
+    kind: "section",
     theme: themes.magenta,
     title: "Folsäuremetabolismus",
-    kicker: "Stoffwechselblockade",
-    description: "",
     sections: [
       {
         id: "folsaeurestoffwechsel-hemmer",

@@ -5,13 +5,10 @@
 
   parts.overgroups.learning = {
     id: "immunsuppressiva-lernuebersichten",
-    kind: "learning",
+    kind: "links",
     includeInLearningLookup: false,
     theme: themes.neutral,
     title: "Links",
-    kicker: "",
-    description:
-      "Die Struktur für indikationsbasierte Übersichten ist vorbereitet. Fachinhalte folgen später.",
     sections: [
       {
         id: "immunsuppressiva-anhand-indikationen",

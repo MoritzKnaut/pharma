@@ -290,7 +290,7 @@
   }
 
   function shouldAlwaysShowOvergroupSubnav(overgroup) {
-    return overgroup.kind !== "learning";
+    return overgroup.kind !== "links";
   }
 
   function renderOvergroupSectionNav(overgroup) {
@@ -474,9 +474,6 @@
         renderThemeStyleAttribute(resolveOvergroupTheme(overgroup), "overview") +
         ">",
       '<div class="overview-card__header">',
-      overgroup.kind === "learning" && overgroup.kicker
-        ? '<p class="overview-card__eyebrow">' + escapeHtml(overgroup.kicker) + "</p>"
-        : "",
       '<a class="overview-card__title-link" href="' +
         escapeHtml(buildViewHref(category.id, overgroup.id, "top")) +
         '">',
@@ -509,9 +506,6 @@
         renderThemeStyleAttribute(resolveOvergroupTheme(overgroup), "overview") +
         ">",
       '<div class="overview-card__header">',
-      overgroup.kind === "learning" && overgroup.kicker
-        ? '<p class="overview-card__eyebrow">' + escapeHtml(overgroup.kicker) + "</p>"
-        : "",
       '<a class="overview-card__title-link" href="' +
         escapeHtml(buildViewHref(category.id, overgroup.id, "top")) +
         '">',
@@ -530,8 +524,8 @@
   function getOverviewCardClasses(overgroup) {
     var classes = ["overview-card", "panel"];
 
-    if (overgroup.kind === "learning") {
-      classes.push("overview-card--learning");
+    if (overgroup.kind === "links") {
+      classes.push("overview-card--links");
     }
 
     return classes;
@@ -581,13 +575,26 @@
       href: buildViewHref(category.id, overgroup.id, getEntryAnchorId(entry)),
       children: shouldShowVariantNavigationItems(entry)
         ? entry.variants.map(function (variant) {
-            return {
-              label: variant.name,
-              href: buildViewHref(category.id, overgroup.id, getVariantAnchorId(entry, variant)),
-            };
+            return buildVariantNavigationItem(overgroup, entry, variant);
           })
         : [],
     };
+  }
+
+  function buildVariantNavigationItem(overgroup, parentEntry, variant) {
+    var item = {
+      label: variant.name,
+      href: buildViewHref(category.id, overgroup.id, getVariantAnchorId(parentEntry, variant)),
+    };
+
+    // Support nested variants in navigation
+    if (variant.variants && variant.variants.length && variant.variantsKind !== "substances") {
+      item.children = variant.variants.map(function (nestedVariant) {
+        return buildVariantNavigationItem(overgroup, parentEntry, nestedVariant);
+      });
+    }
+
+    return item;
   }
 
   function shouldShowVariantNavigationItems(entry) {
@@ -787,7 +794,7 @@
   }
 
   function renderOvergroupHeader(overgroup) {
-    if (!overgroup.title && !overgroup.description) {
+    if (!overgroup.title) {
       return "";
     }
 
@@ -795,7 +802,6 @@
       '<header class="overgroup__header">',
       '<div class="overgroup__heading-copy">',
       overgroup.title ? renderHeading("h2", overgroup.title) : "",
-      overgroup.description ? "<p>" + escapeHtml(overgroup.description) + "</p>" : "",
       "</div>",
       "</header>",
     ].join("");
@@ -1426,6 +1432,14 @@
 
   function renderVariantCard(parentEntry, variant) {
     var variantAnchorId = getVariantAnchorId(parentEntry, variant);
+    var bodyParts = [];
+
+    // Support nested variants - a variant can have its own variants (subgroups or substances)
+    if (variant.variants && variant.variants.length) {
+      bodyParts.push(renderNestedVariantContent(variant));
+    }
+
+    bodyParts.push(renderInformationBlocks(variant));
 
     return [
       '<section class="variant-card"' +
@@ -1440,7 +1454,56 @@
       "</button>",
       "</div>",
       '<div class="variant-card__body">',
-      renderInformationBlocks(variant),
+      bodyParts.join(""),
+      "</div>",
+      "</section>",
+    ].join("");
+  }
+
+  function renderNestedVariantContent(variant) {
+    if (variant.variantsKind === "substances") {
+      return renderSubstanceVariantBlock(variant);
+    }
+
+    // Default: render as subgroups
+    var variantCount = variant.variants.length;
+    var columnCount = variantCount > 3 ? Math.ceil(variantCount / 2) : variantCount;
+
+    return [
+      '<div class="variant-stack variant-stack--balanced variant-stack--nested" style="--variant-columns: ' +
+        escapeHtml(String(columnCount)) +
+        ';">',
+      variant.variants
+        .map(function (nestedVariant) {
+          return renderNestedSubgroupCard(variant, nestedVariant);
+        })
+        .join(""),
+      "</div>",
+    ].join("");
+  }
+
+  function renderNestedSubgroupCard(parentVariant, variant) {
+    var bodyParts = [];
+
+    // Support deeper nesting
+    if (variant.variants && variant.variants.length) {
+      bodyParts.push(renderNestedVariantContent(variant));
+    }
+
+    bodyParts.push(renderInformationBlocks(variant));
+
+    return [
+      '<section class="variant-card variant-card--nested" data-collapsible="variant" data-collapsed="true">',
+      '<div class="variant-card__header">',
+      renderCollapseToggleStart(variant.name, "variant", "variant-card__heading"),
+      '<span class="variant-card__heading-copy">',
+      renderHeading("h6", variant.name),
+      "</span>",
+      renderCollapseChevron(),
+      "</button>",
+      "</div>",
+      '<div class="variant-card__body">',
+      bodyParts.join(""),
       "</div>",
       "</section>",
     ].join("");
@@ -1508,6 +1571,11 @@
   function renderSubstanceCard(parentEntry, variant) {
     var variantAnchorId = getVariantAnchorId(parentEntry, variant);
     var bodyParts = [];
+
+    // Support nested variants within substance cards
+    if (variant.variants && variant.variants.length) {
+      bodyParts.push(renderNestedVariantContent(variant));
+    }
 
     if (variant.substances && variant.substances.length) {
       bodyParts.push(
@@ -1835,7 +1903,7 @@
   }
 
   function getOvergroupHeading(overgroup) {
-    return overgroup.title || overgroup.kicker || "";
+    return overgroup.title || "";
   }
 
   function resolveOvergroupTheme(overgroup) {

@@ -5,11 +5,9 @@
 
   parts.overgroups.influenzaviren = {
     id: "influenzaviren",
-    kind: "antiviral",
+    kind: "section",
     theme: themes.navy,
     title: "Antivirale Pharmaka gegen Influenzaviren",
-    kicker: "Influenzatherapie",
-    description: "",
     sections: [
       {
         id: "influenza-gruppen",

@@ -10,6 +10,6 @@
     substances: ["Tenofovir", "Adefovir"],
     mechanism: [fact("Nukleotidanaloga")],
     effectiveAgainst: [fact("Hepatitis B")],
-    notes: [fact("Tenofovir ist auch aus der HIV-Therapie bekannt")],
+    remember: [fact("Tenofovir ist auch aus der HIV-Therapie bekannt")],
   });
 })();

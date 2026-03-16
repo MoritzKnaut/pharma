@@ -5,11 +5,9 @@
 
   parts.overgroups.herpesviridae = {
     id: "herpesviridae",
-    kind: "antiviral",
+    kind: "section",
     theme: themes.rose,
     title: "Antivirale Pharmaka gegen Herpesviridae",
-    kicker: "DNA-Viren",
-    description: "",
     sections: [
       {
         id: "herpesviridae-gruppen",

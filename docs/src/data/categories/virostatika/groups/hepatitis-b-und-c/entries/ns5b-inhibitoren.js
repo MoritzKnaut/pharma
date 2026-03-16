@@ -9,6 +9,6 @@
   parts.entries.ns5bInhibitoren = entry("NS5B-Inhibitoren", {
     substances: ["Sofosbuvir"],
     effectiveAgainst: [fact("Hepatitis C", "Kombinationstherapie")],
-    notes: [fact("Sofosbuvir ist pangenotypisch einsetzbar")],
+    remember: [fact("Sofosbuvir ist pangenotypisch einsetzbar")],
   });
 })();

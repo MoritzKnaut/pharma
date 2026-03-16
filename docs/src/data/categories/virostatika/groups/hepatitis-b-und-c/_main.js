@@ -5,11 +5,9 @@
 
   parts.overgroups.hepatitisBundC = {
     id: "hepatitis-b-und-c",
-    kind: "antiviral",
+    kind: "section",
     theme: themes.amber,
     title: "Antivirale Pharmaka gegen Hepatitis B und C",
-    kicker: "Hepatitisviren",
-    description: "",
     sections: [
       {
         id: "hepatitis-b",

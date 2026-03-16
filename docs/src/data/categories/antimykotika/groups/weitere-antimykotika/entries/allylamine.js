@@ -14,6 +14,6 @@
       ),
     ],
     effectiveAgainst: ["Dermatophytosen"],
-    notes: [fact("Per os oder lokal")],
+    remember: [fact("Per os oder lokal")],
   });
 })();

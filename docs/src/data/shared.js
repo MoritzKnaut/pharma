@@ -67,11 +67,14 @@
     if (data.sideEffects) {
       item.sideEffects = data.sideEffects;
     }
-    if (data.notes) {
-      item.notes = data.notes;
+    if (data.cave) {
+      item.cave = data.cave;
     }
-    if (data.otherInfo) {
-      item.otherInfo = data.otherInfo;
+    if (data.remember) {
+      item.remember = data.remember;
+    }
+    if (data.additional) {
+      item.additional = data.additional;
     }
     if (data.variants) {
       item.variants = data.variants;
@@ -104,14 +107,23 @@
     if (data.cautions) {
       item.cautions = data.cautions;
     }
-    if (data.notes) {
-      item.notes = data.notes;
+    if (data.cave) {
+      item.cave = data.cave;
     }
-    if (data.otherInfo) {
-      item.otherInfo = data.otherInfo;
+    if (data.remember) {
+      item.remember = data.remember;
+    }
+    if (data.additional) {
+      item.additional = data.additional;
     }
     if (data.sideEffects) {
       item.sideEffects = data.sideEffects;
+    }
+    if (data.variants) {
+      item.variants = data.variants;
+    }
+    if (data.variantsKind) {
+      item.variantsKind = data.variantsKind;
     }
 
     return item;
@@ -231,18 +243,25 @@
         source: "mechanism",
       },
       {
-        kind: "notes",
+        kind: "cave",
+        label: "Cave",
+        title: "Cave",
+        tone: "cave",
+        source: "cave",
+      },
+      {
+        kind: "remember",
         label: "Merke",
         title: "Merke",
         tone: "note",
-        source: "notes",
+        source: "remember",
       },
       {
-        kind: "other",
+        kind: "additional",
         label: "Sonstiges",
         title: "Sonstiges",
         tone: "other",
-        source: "otherInfo",
+        source: "additional",
       },
     ],
   };

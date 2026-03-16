@@ -11,6 +11,6 @@
       fact("Trematoden", "z.B. Schistosomiasis"),
       fact("Cestoden", "z.B. Taenia-Infektionen, Diphyllobothriasis"),
     ],
-    notes: [fact("Bei den meisten Würmern reicht eine Einmalgabe aus")],
+    remember: [fact("Bei den meisten Würmern reicht eine Einmalgabe aus")],
   });
 })();

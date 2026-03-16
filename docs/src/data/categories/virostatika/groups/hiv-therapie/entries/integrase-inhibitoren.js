@@ -17,6 +17,6 @@
     mechanism: [
       fact("Integrationshemmung der HIV-DNA", "in die genomische DNA der Wirtszelle"),
     ],
-    notes: [fact("Enden meist auf -gravir")],
+    remember: [fact("Enden meist auf -gravir")],
   });
 })();

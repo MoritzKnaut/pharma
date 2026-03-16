@@ -10,6 +10,6 @@
     substances: ["Amantadin"],
     mechanism: [fact("Blockade viraler Ionenkanäle")],
     effectiveAgainst: [fact("Influenza A")],
-    notes: [fact("Zusätzliche Anwendung als Parkinson-Medikament")],
+    remember: [fact("Zusätzliche Anwendung als Parkinson-Medikament")],
   });
 })();

@@ -5,11 +5,9 @@
 
   parts.overgroups.anthelminthika = {
     id: "anthelminthika",
-    kind: "antiparasitic",
+    kind: "section",
     theme: themes.amber,
     title: "Anthelminthika",
-    kicker: "Wurmerkrankungen",
-    description: "",
     sections: [
       {
         id: "anthelminthika-gruppen",

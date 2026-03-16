@@ -8,7 +8,7 @@
   parts.entries.antimykotikaBeiProtozoen = entry("Antimykotika bei Protozoen", {
     substances: ["Amphotericin B", "Ketoconazol", "Itraconazol"],
     effectiveAgainst: [fact("Leishmaniose")],
-    notes: [
+    remember: [
       fact(
         "Diese Wirkstoffe sind eigentlich Antimykotika, werden hier aber wegen ihrer Anwendung bei Leishmaniose mitgeführt"
       ),

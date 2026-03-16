@@ -8,7 +8,7 @@
   parts.entries.triazole = entry("Triazole", {
     variantsKind: "substances",
     mechanism: [fact("Azole: Hemmung der Ergosterol-Synthese")],
-    notes: [fact("Systemisch nutzbare Azole")],
+    remember: [fact("Systemisch nutzbare Azole")],
     variants: [
       {
         name: "Fluconazol",
@@ -17,8 +17,8 @@
           "Kryptokokkose",
           "Dermatophytosen",
         ],
-        notes: [fact("Per os oder intravenös")],
-        otherInfo: [fact("Nicht wirksam gegen Aspergillose")],
+        remember: [fact("Per os oder intravenös")],
+        additional: [fact("Nicht wirksam gegen Aspergillose")],
       },
       {
         name: "Voriconazol",
@@ -27,7 +27,7 @@
           "Kryptokokkose",
           fact("Aspergillose", "Standardtherapie"),
         ],
-        notes: [fact("Systemische Anwendung")],
+        remember: [fact("Systemische Anwendung")],
       },
       {
         name: "Itraconazol",
@@ -36,7 +36,7 @@
           "Candida-Onychomykose",
           "Pityriasis versicolor",
         ],
-        notes: [fact("Per os")],
+        remember: [fact("Per os")],
       },
       {
         name: "Posaconazol",
@@ -45,7 +45,7 @@
           "Prophylaxe invasiver Mykosen bei schwerer Immunsuppression",
           "Therapierefraktäre Mykosen",
         ],
-        notes: [fact("Per os")],
+        remember: [fact("Per os")],
       },
     ],
   });

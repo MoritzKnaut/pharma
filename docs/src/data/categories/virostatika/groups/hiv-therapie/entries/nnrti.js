@@ -9,7 +9,7 @@
   parts.entries.nnrti = entry("NNRTI", {
     substances: ["Rilpivirin", "Efavirenz", "Nevirapin", "Etravirin", "Doravirin"],
     mechanism: [fact("Nicht-kompetitive Hemmung der viruseigenen reversen Transkriptase")],
-    notes: [
+    remember: [
       fact("Nicht-nukleosidische Reverse-Transkriptase-Inhibitoren"),
       fact("Tragen oft die Silbe -vir- in der Mitte"),
     ],

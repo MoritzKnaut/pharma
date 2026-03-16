@@ -7,17 +7,16 @@
 
   parts.overgroups.learning = {
     id: "lernuebersichten",
-    kind: "learning",
+    kind: "links",
     includeInLearningLookup: false,
     theme: themes.neutral,
     title: "Links",
-    kicker: "",
-    description: "",
     sections: [
       {
         id: "quick-reference",
         type: "quickReference",
         title: "Anhand Erreger",
+        layout: "wide",
         description: "",
         cards: [
           {
@@ -28,7 +27,7 @@
               "Carbapeneme",
               "Makrolide",
               "Tetracycline",
-              referenceItem("Tigecyclin", "Glycylcycline (z.B. Tigecyclin)"),
+              referenceItem("Tigecyclin", "Glycylcycline"),
               "Lincosamide",
               fact("Fluorchinolone", "v.a. Gruppe III-IV"),
               referenceItem("Sulfonamide / Cotrimoxazol", "Cotrimoxazol"),
@@ -54,7 +53,7 @@
               "Cotrimoxazol",
               "Fosfomycin",
               "Tetracycline",
-              referenceItem("Tigecyclin", "Glycylcycline (z.B. Tigecyclin)"),
+              referenceItem("Tigecyclin", "Glycylcycline"),
             ],
             focusLabel: "Besonders starke gramnegative Wirkung",
             focusItems: [
@@ -87,7 +86,7 @@
               "Aminopenicilline + β-Lactamase-Inhibitor",
               "Piperacillin/Tazobactam",
               "Carbapeneme",
-              referenceItem("Tigecyclin", "Glycylcycline (z.B. Tigecyclin)"),
+              referenceItem("Tigecyclin", "Glycylcycline"),
               "Moxifloxacin",
             ],
           },
@@ -98,7 +97,7 @@
               "Makrolide",
               "Tetracycline",
               fact("Fluorchinolone", "Gruppe III-IV"),
-              referenceItem("Tigecyclin", "Glycylcycline (z.B. Tigecyclin)"),
+              referenceItem("Tigecyclin", "Glycylcycline"),
             ],
           },
           {
@@ -107,7 +106,7 @@
               "Glykopeptide",
               "Linezolid",
               "Daptomycin",
-              referenceItem("Tigecyclin", "Glycylcycline (z.B. Tigecyclin)"),
+              referenceItem("Tigecyclin", "Glycylcycline"),
               fact("Cephalosporine", "5. Generation"),
             ],
           },

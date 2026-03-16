@@ -93,6 +93,7 @@ code {
 .reference-card h4,
 .entry-card h4,
 .variant-card h5,
+.variant-card h6,
 .substance-card__header h5 {
   margin: 0;
   font-family: "Charter", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
@@ -621,7 +622,7 @@ code {
     linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 48%, white 52%), #ffffff 42%);
 }
 
-.overview-card--learning {
+.overview-card--links {
   grid-column: 1 / -1;
   gap: 0.95rem;
   padding: 1.05rem 1.15rem;
@@ -642,7 +643,7 @@ code {
   gap: 0.85rem;
 }
 
-.overview-card--learning .overview-card__header {
+.overview-card--links .overview-card__header {
   gap: 0.28rem;
 }
 
@@ -665,12 +666,12 @@ code {
   font-size: clamp(1.18rem, 1.5vw, 1.42rem);
 }
 
-.overview-card--learning .overview-card__title-link h3 {
+.overview-card--links .overview-card__title-link h3 {
   font-size: clamp(1.18rem, 1.5vw, 1.42rem);
   color: color-mix(in srgb, var(--accent-strong) 78%, #475569 22%);
 }
 
-.overview-card--learning .overview-card__sections {
+.overview-card--links .overview-card__sections {
   grid-template-columns: 1fr;
   gap: 0.7rem 0.85rem;
   align-items: start;
@@ -683,7 +684,7 @@ code {
   border-top: 1px solid color-mix(in srgb, var(--accent-soft) 45%, var(--line));
 }
 
-.overview-card--learning .overview-card__section {
+.overview-card--links .overview-card__section {
   min-height: 100%;
   padding: 0.72rem 0.82rem;
   border-top: none;
@@ -697,12 +698,12 @@ code {
   border-top: none;
 }
 
-.overview-card--learning .overview-card__section:first-child {
+.overview-card--links .overview-card__section:first-child {
   padding: 0.72rem 0.82rem;
   border-top: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line));
 }
 
-.overview-card--learning .overview-card__section-link {
+.overview-card--links .overview-card__section-link {
   font-size: 0.74rem;
 }
 
@@ -749,7 +750,7 @@ code {
   border-left: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
 }
 
-.overview-card--learning .overview-card__section > .overview-pill-list {
+.overview-card--links .overview-card__section > .overview-pill-list {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.55rem 0.7rem;
 }
@@ -779,7 +780,7 @@ code {
   transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
 }
 
-.overview-card--learning .overview-pill {
+.overview-card--links .overview-pill {
   padding: 0.34rem 0.56rem;
   font-size: 0.68rem;
   font-weight: 650;
@@ -1063,7 +1064,8 @@ code {
 
 .content-section__header h3,
 .entry-card__header h4,
-.variant-card h5 {
+.variant-card h5,
+.variant-card h6 {
   color: var(--accent-strong);
 }
 
@@ -1083,6 +1085,12 @@ code {
   font-size: 0.9rem;
   font-weight: 680;
   line-height: 1.12;
+}
+
+.variant-card h6 {
+  font-size: 0.82rem;
+  font-weight: 640;
+  line-height: 1.15;
 }
 
 .semantic-tags {
@@ -1215,6 +1223,18 @@ code {
   grid-template-columns: repeat(var(--variant-columns, 1), minmax(0, 1fr));
 }
 
+.variant-stack--nested {
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.variant-stack--nested .variant-card {
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
 .variant-card {
   padding: 1rem;
   background: linear-gradient(180deg, var(--surface-soft), #ffffff);
@@ -1294,6 +1314,12 @@ code {
   border-color: #efc8c8;
 }
 
+.info-block--cave {
+  --fact-accent: #dc2626;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
 .info-block--other {
   --fact-accent: #c7d1d9;
   background: #fafbfd;
@@ -1334,6 +1360,10 @@ code {
 
 .info-block--warning .info-block__title {
   color: #a61b1b;
+}
+
+.info-block--cave .info-block__title {
+  color: #dc2626;
 }
 
 .info-block--other .info-block__title {
@@ -1839,12 +1869,12 @@ code {
   background: #ebe9ff;
 }
 
-.overgroup--learning .overgroup__sections {
+.overgroup--links .overgroup__sections {
   grid-template-columns: 1fr;
   gap: 2.4rem;
 }
 
-.overgroup--learning .content-section--quickReference {
+.overgroup--links .content-section--quickReference {
   min-width: 0;
 }
 
@@ -1946,7 +1976,7 @@ code {
     scrollbar-gutter: auto;
   }
 
-  .overgroup--learning .overgroup__sections {
+  .overgroup--links .overgroup__sections {
     grid-template-columns: 1fr;
   }
 }
@@ -1968,7 +1998,7 @@ code {
     grid-template-columns: 1fr;
   }
 
-  .overview-card--learning .overview-card__section > .overview-pill-list {
+  .overview-card--links .overview-card__section > .overview-pill-list {
     grid-template-columns: 1fr;
   }
 

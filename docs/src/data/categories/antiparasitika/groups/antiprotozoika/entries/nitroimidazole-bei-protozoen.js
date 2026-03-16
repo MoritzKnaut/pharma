@@ -12,7 +12,7 @@
       fact("Entamoeba histolytica", "Amöbiasis"),
       fact("Trichomonas vaginalis", "Trichomoniasis"),
     ],
-    notes: [
+    remember: [
       fact(
         "Metronidazol ist vor allem als Antibiotikum bekannt, wird aber auch gegen bestimmte Protozoen eingesetzt"
       ),

@@ -14,6 +14,6 @@
         "verhindert die Bildung reifer infektiöser Viruspartikel"
       ),
     ],
-    notes: [fact("Enden meist auf -navir")],
+    remember: [fact("Enden meist auf -navir")],
   });
 })();

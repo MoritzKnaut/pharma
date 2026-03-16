@@ -9,6 +9,6 @@
   parts.entries.ns3ProteaseInhibitoren = entry("NS3-Protease-Inhibitoren", {
     substances: ["Glecaprevir", "Grazoprevir", "Voxilaprevir", "Paritaprevir"],
     effectiveAgainst: [fact("Hepatitis C", "Kombinationstherapie")],
-    notes: [fact("Wichtige direkt antiviral wirkende Substanzen")],
+    remember: [fact("Wichtige direkt antiviral wirkende Substanzen")],
   });
 })();

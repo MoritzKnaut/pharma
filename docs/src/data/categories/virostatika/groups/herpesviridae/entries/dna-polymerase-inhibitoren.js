@@ -14,7 +14,7 @@
         name: "Aciclovir",
         substances: ["Valaciclovir"],
         effectiveAgainst: [fact("Herpes simplex"), fact("Varizella zoster")],
-        notes: [
+        remember: [
           fact(
             "Auch intravenös anwendbar und deshalb wichtig bei schweren Herpesinfektionen"
           ),
@@ -23,12 +23,12 @@
       {
         name: "Ganciclovir",
         effectiveAgainst: [fact("Zytomegalie-Virus", "CMV")],
-        notes: [fact("Für schwere CMV-Infektionen")],
+        remember: [fact("Für schwere CMV-Infektionen")],
       },
       {
         name: "Foscarnet",
         effectiveAgainst: [fact("CMV"), fact("Herpesviridae")],
-        notes: [
+        remember: [
           fact(
             "Wirkt direkt an der viralen DNA-Polymerase und muss nicht erst in der Zelle aktiviert werden"
           ),

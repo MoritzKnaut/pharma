@@ -24,7 +24,7 @@
         "z.B. Neisserien, Helicobacter pylori"
       ),
     ],
-    notes: [
+    remember: [
       fact(
         "Azithromycin zusätzlich gegen Campylobacter spp.",
         "auch einige Enterobacterales wie Shigella spp. und Salmonella spp."

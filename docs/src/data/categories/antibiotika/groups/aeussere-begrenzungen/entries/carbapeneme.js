@@ -28,6 +28,6 @@
       "Wirksam gegen Nonfermenter",
       "Wirksam gegen Anaerobier",
     ],
-    otherInfo: [fact("Meropenem wirkt etwas schwächer gegen grampositive Bakterien")],
+    additional: [fact("Meropenem wirkt etwas schwächer gegen grampositive Bakterien")],
   });
 })();

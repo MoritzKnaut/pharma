@@ -9,6 +9,6 @@
     substances: ["Dimeticon"],
     mechanism: [fact("Dringt in Atemöffnungen von Läusen ein", "blockiert die Atmung")],
     effectiveAgainst: [fact("Pediculosis capitis", "1. Wahl")],
-    notes: [fact("Topische Anwendung bei Kopflausbefall")],
+    remember: [fact("Topische Anwendung bei Kopflausbefall")],
   });
 })();

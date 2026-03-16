@@ -16,7 +16,7 @@
         "bei V.a. systemische Pilzinfektion unter Neutropenie"
       ),
     ],
-    notes: [
+    remember: [
       fact("Intravenös"),
       fact("Caspofungin ist ein typischer Vertreter dieser Gruppe"),
       fact("Anidulafungin und Micafungin haben ein ähnliches Wirkspektrum"),

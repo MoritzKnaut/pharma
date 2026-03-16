@@ -59,7 +59,7 @@
             "z.B. Enterobacterales wie Proteus spp."
           ),
         ],
-        notes: [
+        remember: [
           fact("3a-Gruppe mit breiter gramnegativer Wirkung"),
           fact(
             "3b-Gruppe ist gegen Pseudomonas aeruginosa aktiv",

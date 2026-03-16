@@ -16,7 +16,7 @@
     effectiveAgainst: [
       fact("Einige gramnegative Bakterien", "insb. Pseudomonas aeruginosa"),
     ],
-    notes: [
+    remember: [
       fact(
         "Gegen einige grampositive Erreger synergistisch in Kombination mit β-Lactamen",
         "z.B. Enterococcus faecalis, E. faecium, Listeria monocytogenes"

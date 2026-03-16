@@ -8,6 +8,6 @@
   parts.entries.malariatherapeutika = entry("Malariatherapeutika", {
     substances: ["Atovaquon/Proguanil", "Artemeter/Lumefantrin"],
     effectiveAgainst: [fact("Malaria")],
-    notes: [fact("Typische Kombinationen zur Behandlung der Malaria")],
+    remember: [fact("Typische Kombinationen zur Behandlung der Malaria")],
   });
 })();

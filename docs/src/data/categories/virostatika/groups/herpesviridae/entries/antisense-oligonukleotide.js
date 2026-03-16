@@ -10,6 +10,6 @@
     substances: ["Fomivirsen"],
     mechanism: [fact("Antisense-Medikament")],
     effectiveAgainst: [fact("CMV-Retinitis", "bei AIDS")],
-    notes: [fact("Lokale Therapie am Auge")],
+    remember: [fact("Lokale Therapie am Auge")],
   });
 })();

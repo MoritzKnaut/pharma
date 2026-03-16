@@ -7,10 +7,9 @@
 
   parts.overgroups.azolAntimykotika = {
     id: "azol-antimykotika",
-    kind: "antifungal",
+    kind: "section",
     theme: themes.amber,
     title: "Azol-Antimykotika",
-    kicker: "Ergosterol-Synthese",
     sections: [
       {
         id: "azol-wirkstoffgruppen",

@@ -13,7 +13,7 @@
         "Blockade der Dihydrofolatreduktase"
       ),
     ],
-    otherInfo: [
+    additional: [
       fact(
         "Trimethoprim wird meist nicht allein, sondern zusammen mit Sulfamethoxazol als Cotrimoxazol eingesetzt",
         null,

@@ -7,11 +7,9 @@
 
   parts.overgroups.weitereAntimykotika = {
     id: "weitere-antimykotika",
-    kind: "antifungal",
+    kind: "section",
     theme: themes.magenta,
     title: "Weitere Antimykotika",
-    kicker: "Spezielle Optionen",
-    description: "",
     sections: [
       {
         id: "weitere-antimykotika-gruppen",

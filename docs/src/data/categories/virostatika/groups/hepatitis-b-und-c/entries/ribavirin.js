@@ -9,6 +9,6 @@
   parts.entries.ribavirin = entry("Ribavirin", {
     mechanism: [fact("Nukleosidanalogon", "RNA-Polymerase-Inhibitor")],
     effectiveAgainst: [fact("Hepatitis C", "nur in Kombination mit DAA")],
-    notes: [fact("Ribavirin-freie Regime werden bevorzugt")],
+    remember: [fact("Ribavirin-freie Regime werden bevorzugt")],
   });
 })();

@@ -18,6 +18,6 @@
       "Dermatophytosen",
       fact("Besonders verbreitet bei Onychomykosen"),
     ],
-    notes: [fact("Lokal")],
+    remember: [fact("Lokal")],
   });
 })();

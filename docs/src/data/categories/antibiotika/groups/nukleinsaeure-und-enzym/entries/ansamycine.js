@@ -15,6 +15,6 @@
       "Wenige gramnegative Bakterien",
       "Mykobakterien",
     ],
-    notes: [fact("Starker CYP-Induktor")],
+    remember: [fact("Starker CYP-Induktor")],
   });
 })();

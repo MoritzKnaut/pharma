@@ -6,17 +6,16 @@
 
   parts.overgroups.learning = {
     id: "antimykotika-lernuebersichten",
-    kind: "learning",
+    kind: "links",
     includeInLearningLookup: false,
     theme: themes.neutral,
     title: "Links",
-    kicker: "",
-    description: "",
     sections: [
       {
         id: "antimykotika-anhand-erreger",
         type: "quickReference",
         title: "Anhand Erreger",
+        layout: "wide",
         description: "",
         cards: [
           {

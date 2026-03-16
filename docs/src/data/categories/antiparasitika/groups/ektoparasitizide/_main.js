@@ -5,11 +5,9 @@
 
   parts.overgroups.ektoparasitizide = {
     id: "ektoparasitizide",
-    kind: "antiparasitic",
+    kind: "section",
     theme: themes.clay,
     title: "Ektoparasitizide",
-    kicker: "Milben und Läuse",
-    description: "",
     sections: [
       {
         id: "ektoparasitizide-gruppen",

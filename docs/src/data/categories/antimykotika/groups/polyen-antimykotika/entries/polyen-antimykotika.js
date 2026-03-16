@@ -19,7 +19,7 @@
           "Kryptokokkose",
           fact("Schimmelpilze", "Aspergillose"),
         ],
-        notes: [
+        remember: [
           fact("Lokal oder intravenös"),
           fact("Nur lipidformulierte Präparate verwenden"),
         ],
@@ -27,7 +27,7 @@
       {
         name: "Nystatin",
         effectiveAgainst: [fact("Hefen", "Candidose")],
-        notes: [
+        remember: [
           fact("Nur lokale Anwendung möglich"),
           fact("Kann bei Immunsuppression prophylaktisch peroral gegeben werden"),
           fact("Lokal an Haut und Schleimhaut"),

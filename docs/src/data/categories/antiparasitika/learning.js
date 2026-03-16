@@ -5,17 +5,16 @@
 
   parts.overgroups.learning = {
     id: "antiparasitika-lernuebersichten",
-    kind: "learning",
+    kind: "links",
     includeInLearningLookup: false,
     theme: themes.neutral,
     title: "Links",
-    kicker: "",
-    description: "",
     sections: [
       {
         id: "antiparasitika-anhand-erreger",
         type: "quickReference",
         title: "Anhand Erreger",
+        layout: "wide",
         description: "",
         cards: [
           {

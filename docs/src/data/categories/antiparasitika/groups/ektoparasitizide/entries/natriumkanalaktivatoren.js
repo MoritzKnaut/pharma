@@ -10,6 +10,6 @@
     mechanism: [fact("Toxische Wirkung durch Anreicherung im Nervengewebe des Arthropoden")],
     effectiveAgainst: [fact("Skabies", "1. Wahl")],
     cautions: [fact("Pediculosis capitis", "nicht mehr empfohlen")],
-    notes: [fact("Topische Anwendung")],
+    remember: [fact("Topische Anwendung")],
   });
 })();

@@ -6,11 +6,9 @@
 
   parts.overgroups.echinocandine = {
     id: "echinocandine",
-    kind: "antifungal",
+    kind: "section",
     theme: themes.blue,
     title: "Echinocandine",
-    kicker: "Zellwand-Synthese",
-    description: "",
     sections: [
       {
         id: "echinocandine-gruppen",

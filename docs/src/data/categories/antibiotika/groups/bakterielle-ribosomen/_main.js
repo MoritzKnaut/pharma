@@ -5,11 +5,9 @@
 
   parts.overgroups.bakterielleRibosomen = {
     id: "bakterielle-ribosomen",
-    kind: "antibiotic",
+    kind: "section",
     theme: themes.blue,
     title: "Bakterielle Ribosomen",
-    kicker: "Proteinsynthesehemmung",
-    description: "",
     sections: [
       {
         id: "proteinsynthesehemmer",

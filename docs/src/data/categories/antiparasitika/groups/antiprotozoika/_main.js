@@ -5,11 +5,9 @@
 
   parts.overgroups.antiprotozoika = {
     id: "antiprotozoika",
-    kind: "antiparasitic",
+    kind: "section",
     theme: themes.navy,
     title: "Antiprotozoika",
-    kicker: "Einzeller",
-    description: "",
     sections: [
       {
         id: "antiprotozoika-gruppen",

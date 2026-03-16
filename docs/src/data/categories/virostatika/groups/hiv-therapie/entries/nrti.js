@@ -13,7 +13,7 @@
         "Kettenabbruch nach Einbau in neu synthetisierte DNA-Stränge"
       ),
     ],
-    notes: [
+    remember: [
       fact("Nukleosidische und nukleotidische Reverse-Transkriptase-Inhibitoren"),
       fact("Enden meist auf -in"),
     ],

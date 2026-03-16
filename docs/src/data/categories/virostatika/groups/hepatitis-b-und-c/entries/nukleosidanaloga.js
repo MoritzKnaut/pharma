@@ -10,6 +10,6 @@
     substances: ["Entecavir", "Lamivudin", "Telbivudin"],
     mechanism: [fact("Hemmung der reversen Transkriptase")],
     effectiveAgainst: [fact("Hepatitis B")],
-    notes: [fact("Lamivudin ist auch aus der HIV-Therapie bekannt")],
+    remember: [fact("Lamivudin ist auch aus der HIV-Therapie bekannt")],
   });
 })();

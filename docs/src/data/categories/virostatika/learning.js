@@ -5,17 +5,16 @@
 
   parts.overgroups.learning = {
     id: "virostatika-lernuebersichten",
-    kind: "learning",
+    kind: "links",
     includeInLearningLookup: false,
     theme: themes.neutral,
     title: "Links",
-    kicker: "",
-    description: "",
     sections: [
       {
         id: "virostatika-anhand-erreger",
         type: "quickReference",
         title: "Anhand Erreger",
+        layout: "wide",
         description: "",
         cards: [
           {

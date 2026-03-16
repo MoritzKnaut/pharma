@@ -5,11 +5,9 @@
 
   parts.overgroups.nukleinsaeureUndEnzym = {
     id: "nukleinsaeure-und-enzym",
-    kind: "antibiotic",
+    kind: "section",
     theme: themes.orange,
     title: "Nukleinsäure und zugehörige Enzyme",
-    kicker: "DNA, RNA und Enzymziele",
-    description: "",
     sections: [
       {
         id: "dna-rna-wirksame-antibiotika",

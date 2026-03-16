@@ -14,6 +14,6 @@
       ),
     ],
     effectiveAgainst: [fact("Akute Hepatitis C"), fact("Chronische Hepatitis B")],
-    notes: [fact("Heute nur noch selten oder bei speziellen Indikationen")],
+    remember: [fact("Heute nur noch selten oder bei speziellen Indikationen")],
   });
 })();

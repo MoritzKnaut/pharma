@@ -5,11 +5,9 @@
 
   parts.overgroups.aeussereBegrenzungen = {
     id: "aeussere-begrenzungen",
-    kind: "antibiotic",
+    kind: "section",
     theme: themes.teal,
     title: "Äußere Begrenzungen",
-    kicker: "Zellwand und Membran",
-    description: "",
     sections: [
       {
         id: "beta-lactam-antibiotika",
