@@ -2061,8 +2061,9 @@ code {
   .page-shell {
     grid-template-columns: 1fr;
     height: auto;
-    padding: 1.25rem;
+    padding: 1rem;
     overflow: visible;
+    gap: 1rem;
   }
 
   .side-panel {
@@ -2083,21 +2084,38 @@ code {
     overflow: visible;
     overscroll-behavior: auto;
     scrollbar-gutter: auto;
+    padding-right: 0;
   }
 
   .overgroup--links .overgroup__sections {
     grid-template-columns: 1fr;
   }
+
+  .overgroup__sections {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .entry-grid {
+    --entry-min-width: 280px;
+  }
+
+  .category-overview {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
   .page-shell {
-    padding: 1rem;
-    gap: 1rem;
+    padding: 0.75rem;
+    gap: 0.75rem;
   }
 
   .side-panel,
   .overgroup {
+    padding: 0.875rem;
+  }
+
+  .content-section {
     padding: 1rem;
   }
 
@@ -2107,11 +2125,77 @@ code {
     grid-template-columns: 1fr;
   }
 
+  .entry-grid {
+    --entry-min-width: 240px;
+  }
+
+  .overgroup__sections {
+    grid-template-columns: 1fr;
+  }
+
+  .category-overview {
+    grid-template-columns: 1fr;
+  }
+
   .overview-card--links .overview-card__section > .overview-pill-list {
     grid-template-columns: 1fr;
   }
 
   .variant-stack--balanced {
     grid-template-columns: 1fr;
+  }
+
+  .variant-card {
+    padding: 0.75rem;
+  }
+
+  .entry-card {
+    padding: 0.875rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .page-shell {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .side-panel,
+  .overgroup {
+    padding: 0.625rem;
+  }
+
+  .content-section {
+    padding: 0.75rem;
+  }
+
+  .entry-card {
+    padding: 0.625rem;
+  }
+
+  .reference-card,
+  .pearl-card {
+    padding: 0.75rem;
+  }
+
+  .variant-card {
+    padding: 0.625rem;
+  }
+
+  .semantic-tags {
+    gap: 0.25rem;
+  }
+
+  .semantic-tag {
+    padding: 0.1rem 0.35rem;
+    font-size: 0.62rem;
+  }
+
+  .fact-row {
+    padding: 0.6rem 0.7rem;
+  }
+
+  .info-block {
+    padding: 0.75rem 0.75rem 0.85rem;
   }
 }
