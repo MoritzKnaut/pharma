@@ -31,6 +31,19 @@ Categories can expose a top "turned around" view in two ways:
 
 Entry and variant cards can show information buckets when data exists: Substanzen, Indikationen, Wirksamkeit, Nebenwirkungen, Wirkmechanismus, Merke, and Sonstiges. Legacy categories do not need `Indikationen`.
 
+### Immunsuppressiva
+
+The `Immunsuppressiva` category is organized into pharmacologically distinct main blocks. It now separates:
+
+- zytostatic / cytotoxic immunosuppressants
+- activation-inhibiting immunosuppressants
+- leukocyte-migration inhibitors
+- glucocorticoids
+- biologicals / antibodies
+- pleiotropic immunomodulators
+
+This category therefore mixes classic transplant and autoimmune drugs with targeted antibody therapies, while keeping each mechanism family in its own visible navigation block.
+
 ## Behavior And Rules
 
 - Navigation is now view-based at the category level:

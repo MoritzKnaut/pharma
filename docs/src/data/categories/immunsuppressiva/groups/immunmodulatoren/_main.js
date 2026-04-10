@@ -11,8 +11,8 @@
     id: "immunmodulatoren",
     kind: "section",
     theme: themes.violet,
-    title: "Immunmodulatoren",
-    kicker: "Niedermolekulare Wirkstoffe zur Immunmodulation",
+    title: "Pleiotrope Immunmodulatoren",
+    kicker: "Breit wirkende niedermolekulare Immunmodulation außerhalb der klassischen Hauptgruppen",
     sections: [
       {
         id: "immunmodulatoren-kinase",

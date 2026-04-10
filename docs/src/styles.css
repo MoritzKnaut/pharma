@@ -2026,6 +2026,46 @@ code {
   background: #f9e7df;
 }
 
+.semantic-tag--biological {
+  color: #7c2d12;
+  background: #ffefe8;
+}
+
+.semantic-tag--tnf {
+  color: #1d4ed8;
+  background: #e8efff;
+}
+
+.semantic-tag--interleukin {
+  color: #0f766e;
+  background: #dbfbf3;
+}
+
+.semantic-tag--antimetabolite {
+  color: #4338ca;
+  background: #ebe9ff;
+}
+
+.semantic-tag--calcineurin {
+  color: #0f4c81;
+  background: #e6f0fa;
+}
+
+.semantic-tag--jak {
+  color: #9d174d;
+  background: #fde7f1;
+}
+
+.semantic-tag--migration {
+  color: #0b7285;
+  background: #e3fafc;
+}
+
+.semantic-tag--glucocorticoid {
+  color: #9a670f;
+  background: #fff3d6;
+}
+
 .overgroup--links .overgroup__sections {
   grid-template-columns: 1fr;
   gap: 2.4rem;

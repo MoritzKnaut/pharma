@@ -21,6 +21,9 @@
           {
             title: "Rheumatoide Arthritis",
             items: [
+              referenceItem("Methotrexat", "Methotrexat"),
+              referenceItem("Azathioprin", "Azathioprin"),
+              referenceItem("Leflunomid", "Leflunomid"),
               referenceItem("TNF-Inhibitoren", "TNF-Inhibitoren"),
               referenceItem("IL1-Inhibitoren", "IL1-Inhibitoren"),
               referenceItem("IL6-Inhibitoren", "IL6-Inhibitoren"),
@@ -33,6 +36,7 @@
           {
             title: "Multiple Sklerose",
             items: [
+              referenceItem("Fingolimod", "Fingolimod"),
               referenceItem("Integrin-Inhibitoren", "Integrin- und IgE-Inhibitoren", "Natalizumab"),
               referenceItem("CD52-Inhibitoren", "CD-gezielte Antikörper", "Alemtuzumab"),
               referenceItem("Dimethylfumarat", "Dimethylfumarat"),
@@ -42,6 +46,8 @@
           {
             title: "Chronisch-entzündliche Darmerkrankungen",
             items: [
+              referenceItem("Ciclosporin A", "Ciclosporin A"),
+              referenceItem("Glucocorticoide", "Glucocorticoide"),
               referenceItem("TNF-Inhibitoren", "TNF-Inhibitoren"),
               referenceItem("Aminosalicylate", "Aminosalicylate"),
               referenceItem("IL12/23-Inhibitoren", "Weitere IL-Inhibitoren", "Ustekinumab"),
@@ -51,6 +57,13 @@
           {
             title: "Transplantation",
             items: [
+              referenceItem("Azathioprin", "Azathioprin"),
+              referenceItem("Mycophenolatmofetil", "Mycophenolatmofetil"),
+              referenceItem("Ciclosporin A", "Ciclosporin A"),
+              referenceItem("Tacrolimus", "Tacrolimus"),
+              referenceItem("Sirolimus", "Sirolimus"),
+              referenceItem("Everolimus", "Everolimus"),
+              referenceItem("Glucocorticoide", "Glucocorticoide"),
               referenceItem("CD3-Inhibitoren", "CD-gezielte Antikörper", "Muromonab"),
               referenceItem("CD25-Inhibitoren", "CD-gezielte Antikörper", "Basiliximab")
             ]

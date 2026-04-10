@@ -10,18 +10,22 @@
     theme: themes.clay,
     page: {
       title: "Immunsuppressiva",
-      subtitle: "Biologicals, Immunmodulatoren und Zytokininhibitoren",
+      subtitle: "Klassische Immunsuppressiva, Biologicals und pleiotrope Immunmodulation",
       intro: "",
       description:
-        "Lernübersicht zu Immunsuppressiva: Von TNF-Inhibitoren über IL-gezielte Therapien bis zu klassischen Immunmodulatoren.",
+        "Lernübersicht zu Immunsuppressiva: Von zytostatischen und aktivierungshemmenden Wirkstoffen über Migrationshemmer und Glucocorticoide bis zu Biologicals und pleiotropen Immunmodulatoren.",
       navIntro:
-        "Biologicals, Immunmodulatoren und Zytokininhibitoren nach Wirkmechanismen und Indikationen.",
+        "Klassische Immunsuppressiva, Biologicals und pleiotrope Immunmodulation nach Wirkmechanismen und Indikationen.",
     },
     renderer: {
       semanticTags: parts.semanticTags,
     },
     overgroups: [
       parts.overgroups.learning,
+      parts.overgroups.zytostatischeZytotoxischeImmunsuppressiva,
+      parts.overgroups.aktivierungshemmendeImmunsuppressiva,
+      parts.overgroups.leukozytenmigrationsHemmer,
+      parts.overgroups.glucocorticoide,
       parts.overgroups.biologicals,
       parts.overgroups.immunmodulatoren,
     ],
