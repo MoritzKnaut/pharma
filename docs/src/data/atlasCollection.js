@@ -7,6 +7,7 @@
     renderer: shared.rendererConfig || {},
     categories: [
       categories.antibiotika,
+      categories.antidiabetika,
       categories.antimykotika,
       categories.antiparasitika,
       categories.virostatika,

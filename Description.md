@@ -2,7 +2,7 @@
 
 ## Overview
 
-The website is a compact **Pharma-Atlas** for clearly separated drug categories. Categories include Antibiotika, Antimykotika, Antiparasitika, Virostatika, and Immunsuppressiva (scaffold for future expansion).
+The website is a compact **Pharma-Atlas** for clearly separated drug categories. Categories include Antibiotika, Antidiabetika, Antimykotika, Antiparasitika, Virostatika, Immunsuppressiva, and Zytostatika.
 
 > **Note:** For data editing guidelines, see `DATA_STRUCTURE_GUIDE.md`. For system architecture, see `Architecture.md`.
 
